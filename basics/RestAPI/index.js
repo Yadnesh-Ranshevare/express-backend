@@ -37,9 +37,9 @@ app.delete('/api/user/:id',(req,res)=>{      //delete existing user
 
         //in this case you can simply replace above syntax with the following syntax 
 app.route("/api/user/:id")
-.get((req,res), (req,res)=> {})        //for get request
-.patch((req,res), (req,res)=> {})        //for update request
-.delete((req,res), (req,res)=> {})     //for delete request
+.get((req,res)=> {})        //for get request
+.patch((req,res)=> {})        //for update request
+.delete((req,res)=> {})     //for delete request
 
 */
 
