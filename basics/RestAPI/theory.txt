@@ -1,0 +1,9 @@
+use mockaroo.com to generate fake data instead of using database
+use postman.com to  test our api
+
+post :- add new data
+patch :- update existing data
+delete :- delete existing data
+
+using middleware to accept data via api request which sends the form encoded data
+use from encoded to send the data in post request
