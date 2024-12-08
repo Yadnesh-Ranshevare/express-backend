@@ -1,0 +1,20 @@
+step 1: npm install express
+step 2: npm install mongoose
+step 3: create data model ( in our example we are creating the data model of hospital management system )
+        syntax:
+            import mongoose from 'mongoose'
+            const Schema = mongoose.Schema( { //Schema },{ timestamp:true })
+            export const mySchema = mongoose.model("mySchema" , Schema)     
+
+           { note: in mongodb mySchema will convert into myschemas ( all lowe case and puler )}
+
+            how to create Schema:-
+                Schema_name: //type (String,Number,Boolean)
+
+                        OR 
+
+                Schema_name{
+                    //properties ( type,required,unique,enum)
+                }
+
+step 4: connect it to the mongodb database 

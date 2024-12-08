@@ -1,0 +1,16 @@
+{
+  "name": "mongodbconnectivity",
+  "version": "1.0.0",
+  "description": "learning how to connect mongodb whith express/node js",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "yadnesh ranshevare",
+  "license": "ISC",
+  "dependencies": {
+    "mongoose": "^8.8.4",
+    "rxpress": "^0.3.0"
+  }
+}

@@ -1,0 +1,1 @@
+export const DB_NAME = "myDatabase"      //as name of the application will be constant can be anything

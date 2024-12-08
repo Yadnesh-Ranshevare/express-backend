@@ -1,0 +1,12 @@
+packages use:-
+    1: express
+    2: mongoose
+    3: -D nodemon ( to restart server automatically on every save also -D: we downing its dev dependency )
+    4: dotenv       ( to use environment variable )
+    5: cookie-parser    ( to perform crude operation on cookie )
+    6: cors ( to solve the problem of cross origin resource shearing )
+
+
+other links:-
+    1: https://mrkandreev.name/snippets/gitignore-generator/ ( gitignore generator )
+    2: mongodb atlas ( online database )
