@@ -7,8 +7,12 @@ packages use:-
     4: dotenv       ( to use environment variable )
     5: cookie-parser    ( to perform crude operation on cookie )
     6: cors ( to solve the problem of cross origin resource shearing )
+    7: mongoose-aggregate-paginate-v2 ( to write aggregation query )
+    8: jsonwebtoken ( to create token )
+    9: bcrypt ( to hash passwords )  
 
 
 other links:-
     1: https://mrkandreev.name/snippets/gitignore-generator/ ( gitignore generator )
     2: mongodb atlas ( online database )
+    3: https://www.npmjs.com/

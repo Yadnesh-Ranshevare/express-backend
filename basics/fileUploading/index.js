@@ -47,7 +47,7 @@ const upload = multer({storage:storage})
 //step-3:create post request
 app.post('/upload',upload.single('uploadedFile'),   //will upload the single file / uploadFile is the name of that input felid in ejs file  
     (req,res) => {
-        console.log(req.body)
+        console.log(req.body)       
         console.log(req.file)
         return res.redirect("/")        //redirect to home page
     }
