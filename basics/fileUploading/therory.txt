@@ -1,0 +1,30 @@
+you can upload file by using multer package in node module
+
+method 1 :-
+    steps:- 
+        1 :- create form in EJS with 3 attribute i.e, action="/upload" ( on which url we want to upload this file ), method="POST"( which request you are sending to backend ) enctype="multipart/form-data" ( for encoding )
+        2 :- create upload middleware 
+            const upload = multer({dest: "path/"})  
+        3 :- create post request with that action path on backend and middleware along with redirecting ( if you doesn't redirect then the app will continuously load that upload file ) 
+
+    in this  method you cant read the uploaded file 
+
+method 2 :-
+    steps:- 
+        1 :- create form in EJS with 3 attribute i.e, action="/upload" ( on which url we want to upload this file ), method="POST"( which request you are sending to backend ) enctype="multipart/form-data" ( for encoding )
+        2 :- create disk storage to configure how to store the file
+        3 :- create upload middleware this time this upload middleware will use disk storage configuration to upload the file
+        4 :- create post request with that action path on backend and middleware along with redirecting ( if you doesn't redirect then the app will continuously load that upload file ) 
+
+when ever you upload the file using multer we get following data in req.file:-
+{
+      fieldname: 'uploadedFile',
+      originalname: 'WhatsApp Image 2024-10-24 at 20.38.41_077cd504.jpg',
+      encoding: '7bit',
+      mimetype: 'image/jpeg',
+      destination: './upload',
+      filename: '1733824164247-WhatsApp Image 2024-10-24 at 20.38.41_077cd504.jpg',
+      path: 'upload\\1733824164247-WhatsApp Image 2024-10-24 at 20.38.41_077cd504.jpg',
+      size: 70172
+}
+also we set no data through req.body 
