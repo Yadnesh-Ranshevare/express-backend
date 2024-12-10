@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ejsHome</title>
+</head>
+<body>
+    <h1>server side rendering using ejs</h1>
+    <%  
+        if(user) {
+            %> 
+            <p>hello <%= user %></p>
+            <% 
+        } else {
+            %> 
+            <p>hello user</p>
+            <% 
+        }
+    %>
+     <p>Go to the <a href="/test/ejs">withoutObj Page</a></p>       <!-- this link will redirect to withoutObj page directly -->
+
+</body>
+</html>

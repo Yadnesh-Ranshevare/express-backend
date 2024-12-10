@@ -1,0 +1,13 @@
+
+to do server side rendering we need some view engine like EJS,PUG,handlebars,etc 
+steps to use EJS ( EJS is similar to html )
+
+1 :- npm i EJS
+2 :- tell express that we are using EJS
+3 :- git the location of EJS files
+4 :- render and return the server side render EJS pages
+
+syntax:-
+    <%  //write js  %>
+    <%= //value inside the object %>
+    <% //js %> <!-- EJS -->  <% //js  %>
