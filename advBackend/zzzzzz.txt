@@ -10,6 +10,8 @@ packages use:-
     7: mongoose-aggregate-paginate-v2 ( to write aggregation query )
     8: jsonwebtoken ( to create token )
     9: bcrypt ( to hash passwords )  
+    10: cloudinary  ( to store the file )
+    11: multer (  to handel the files )
 
 
 other links:-
