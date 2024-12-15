@@ -1,4 +1,4 @@
-class apiResponse{
+class ApiResponse{
     constructor(
         statusCode,
         data,
@@ -6,6 +6,8 @@ class apiResponse{
     ){
         this.statusCode = statusCode
         this.data = data
+        this.massage = massage
         this.success = statusCode < 400         //status code must be smaller than 400
     }
 }
+export {ApiResponse}
