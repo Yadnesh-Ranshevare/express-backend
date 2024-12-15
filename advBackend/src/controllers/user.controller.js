@@ -60,14 +60,20 @@ const registerUSer = asyncHandler(  async( req, res ) => {
 
     //step 4:  check for file ( images,avatar )
     const avatarLocalPath = req.files?.avatar[0]?.path  //will give you a local path of an avatar image 
-    const coverImageLocalPath = req.files?.coverImage[0]?.path
+    //const coverImageLocalPath = req.files?.coverImage[0]?.path
+    let coverImageLocalPath ;
+    if(req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length > 0){    //isArray will check that is the given property is array or not, .length >0 :if it is a array the check is that array have any value or not 
+        coverImageLocalPath = req.files.coverImage[0].path  //in case of true the cover image is exist
+    }
+
+   // console.log(req.files)      //return an array which will give you the info about the files you have uploaded
     if(!avatarLocalPath){   //checking is file upload or not on server
         throw new apiError(400,"avatar file is required")
     }
 
     //step 5: upload them to cloudinary
     const avatar = await uploadOnCloudinary(avatarLocalPath)   //this will take some time
-    const coverImage = await uploadOnCloudinary(avatarLocalPath)
+    const coverImage = await uploadOnCloudinary(coverImageLocalPath)
 
     if(!avatar){        //checking is file upload or not on cloudinary
         throw new apiError(400,"avatar file is required")   

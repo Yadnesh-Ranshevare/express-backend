@@ -29,7 +29,7 @@ const userSchema = new Schema({
         required:true
     },
     coverImage:{
-        type:String,        //cloudinary url
+        type:String,        //cloudinary url if img doesn't exist cloudinary will return the empty string  
     },
     watchHistory:[
         {
