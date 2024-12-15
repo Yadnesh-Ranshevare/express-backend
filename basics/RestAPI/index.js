@@ -83,7 +83,7 @@ app.route("/api/user/:id")       //use /:(parameter name) for dynamic routing
         return res.status(404).json({ status: "User not found" });
     } 
 
-    // const newFile = user.filter(val=> val !== person)
+    // const newFile = user.filter(val=> val !== person)    
 
     user.splice(person, 1);        // This will remove the person from the user array
 

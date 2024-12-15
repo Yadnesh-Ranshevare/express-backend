@@ -17,4 +17,13 @@ app.use(express.urlencoded({extended:true,limit:"16kb"}))   //for data through u
 app.use(express.static("public"))   //store the data in to our app
 app.use(cookieParser())     //to perform crude operation on cookie 
 
+
+
+//routes import
+import useRouter from "./routes/user.routes.js"
+
+//routes declaration
+app.use("/api/v1/user",useRouter) //this will pass the control to useRouter once we hit the /api/v1/.user route
+//http://localhost:8000/api/v1/user/( this path will be decided by the useRouter ) 
+
 export { app }
