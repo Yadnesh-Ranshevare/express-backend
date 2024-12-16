@@ -10,6 +10,7 @@ const generateAccessAndRefreshToken = async( userId ) => {
     // console.log("inside the generateAccessAndRefreshToken")
     try {
         const user = await User.findById(userId)
+        //to generate access and refresh token
         const accessToken = user.generateAccessToken()
         const refreshToken = user.generateRefreshToken()
         // console.log(user,accessToken,refreshToken)
@@ -18,7 +19,7 @@ const generateAccessAndRefreshToken = async( userId ) => {
         user.refreshToken = refreshToken        //storing the refresh token into the database
         await user.save({validateBeforeSave:false})     //saving the new database
         
-        return{accessToken,refreshToken}
+        return{accessToken,refreshToken}    //name must be same while accepting this token
     } catch (error) {
         throw new apiError(500,"something went wrong while generating the access and refresh token")
     }
@@ -222,6 +223,8 @@ const logOutUser = asyncHandler( async(req,res)=>{
     )
 })
 
+
+//this function will automatically generate new access and refresh token once access token expired
 const refreshAccessToken = asyncHandler(async(req,res)=>{   //will refresh the access token once it expire
     const incomingRefreshToken = req.cookies.refreshToken  || req.body.refreshToken  //gating the refresh token form cookie or req body
     if(!incomingRefreshToken){
@@ -233,15 +236,15 @@ const refreshAccessToken = asyncHandler(async(req,res)=>{   //will refresh the a
     try {
         const decodedToken = jwt.verify(incomingRefreshToken,process.env.REFRESH_TOKEN_SECRETE)    //refresh token is formed on id only
 
-        const user = await User.findById(decodedToken?._id)
+        const user = await User.findById(decodedToken?._id) //getting user detail from decoded refresh token
         // console.log(user)
         if(!user){
             throw new apiError(401, "invalid refresh token")
         }
         // console.log(user?.refreshToken)
-        // if(incomingRefreshToken !== user?.refreshToken){
-        //     throw new apiError(401,"refresh token s expired or used")
-        // }
+        if(incomingRefreshToken !== user?.refreshToken){        //checking is the refresh token get from the cookie is same as that of user
+            throw new apiError(401,"refresh token s expired or used")
+        }
         // console.log(incomingRefreshToken)
     
         const option={
@@ -249,7 +252,7 @@ const refreshAccessToken = asyncHandler(async(req,res)=>{   //will refresh the a
             secure:true
         }
     
-        const {accessToken, refreshToken} = await generateAccessAndRefreshToken(user._id)
+        const {accessToken, refreshToken} = await generateAccessAndRefreshToken(user._id)   //generating new refresh and access token  
         // console.log(accessToken);
         // console.log(refreshToken);
         
