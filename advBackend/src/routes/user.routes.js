@@ -1,6 +1,7 @@
 import { Router } from "express";
-import { registerUSer } from "../controllers/user.controller.js";
+import { loginUser, logOutUser, registerUSer } from "../controllers/user.controller.js";
 import {upload} from "../middleware/multer.middleware.js"
+import { verifyJWT } from "../middleware/auth.middleware.js";
 
 const router = Router()
 
@@ -27,7 +28,12 @@ router.route("/register").post(     //this will run the post command on register
             maxCount:1
         }
     ]),
-    registerUSer)    
+    registerUSer)  
+    
+router.route("/login").post(loginUser)
+
+//secured routes
+router.route("/logout").post(verifyJWT,logOutUser)
 
 
 

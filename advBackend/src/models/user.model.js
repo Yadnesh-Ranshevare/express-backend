@@ -64,7 +64,8 @@ userSchema.methods.isPasswordCorrect = async function(password){ //password send
 
 
 userSchema.methods.generateAccessToken = function(){
-    jwt.sign({      //will create the access token
+    // console.log("access token called")
+    return jwt.sign({      //will create the access token
         _id:this._id,       //assign by mongodb
         email:this.email,
         username: this.username,
@@ -77,7 +78,8 @@ userSchema.methods.generateAccessToken = function(){
     )
 }
 userSchema.methods.generateRefreshToken = function(){
-    jwt.sign({      //will create the refresh token
+    // console.log("refresh token called")
+    return jwt.sign({      //will create the refresh token
         _id:this._id,       //assign by mongodb
     },
     process.env.REFRESH_TOKEN_SECRETE,

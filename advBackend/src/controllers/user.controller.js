@@ -4,6 +4,25 @@ import { User } from "../models/user.model.js"
 import  { uploadOnCloudinary } from "../utils/cloudnary.js"
 import { ApiResponse } from "../utils/apiResponce.js"
 
+
+const generateAccessAndRefreshToken = async( userId ) => {
+    try {
+        const user = await User.findById(userId)
+        const accessToken = user.generateAccessToken()
+        const refreshToken = user.generateRefreshToken()
+        // console.log(user,accessToken,refreshToken)
+        
+        user.refreshToken = refreshToken        //storing the refresh token into the database
+        await user.save({validateBeforeSave:false})     //saving the new database
+        
+        return{accessToken,refreshToken}
+    } catch (error) {
+        throw new apiError(500,"something went wrong while generating the access and refresh token")
+    }
+}
+
+
+
 const registerUSer = asyncHandler(  async( req, res ) => {
     //basics controller which gives the response 
     // res.status(200).json({      //you can send any status code you want
@@ -107,4 +126,103 @@ const registerUSer = asyncHandler(  async( req, res ) => {
 
 })
 
-export { registerUSer }
+
+const loginUser = asyncHandler( async( req,res ) => {
+    /*
+        step 1: get data from rhe user body
+        step 2: check for the username and email
+        step 3: find the user
+        step 4: check password
+        step 5: generate the access and refresh token
+        step 5: send the cookie
+    */
+
+    //step 1: get the data from user body
+    const {email,username,password} = req.body
+    // console.log(email)
+
+    //step 2: check for the username and email
+    if(!(username || email)){
+        throw new apiError(400,"username or email is required")
+    }
+
+    //step 3: find the user
+    const user = await User.findOne({
+        $or: [ { username },{ email } ]
+    })
+    // console.log(user);
+    
+    if(!user){
+        throw new apiError(404, "user does not exist")
+    }
+
+    //step 4: check the password
+    const isPAsswordValid = await user.isPasswordCorrect(password)  //this method will compare the password send by the user with the one available in db and return the true or false 
+    if(!isPAsswordValid){
+        throw new apiError(401,"invalid user credentials")
+    }
+
+    // step 5: generate the access and refresh token
+    const { accessToken,refreshToken } = await generateAccessAndRefreshToken(user._id)  //this method will change the db soo you need to get the new data
+
+    //step 6: send the cookie
+    const loggedInUser = await User.findById(user._id).select("-password -refreshToken")
+    console.log(loggedInUser)
+    const option = {    //with this the cookie is only modified by the server not by frontend
+        httpOnly: true,
+        secure:true
+    }
+    return res
+    .status(200)
+    .cookie("accessToken",accessToken,option)       //setting the cookie
+    .cookie("refreshToken",refreshToken,option)     //setting the cookie
+    .json(
+        new ApiResponse(
+            200,
+            {       //data
+                user: loggedInUser
+            },
+            "user logged in successfully"
+        )
+    )
+})
+
+
+const logOutUser = asyncHandler( async(req,res)=>{
+    //the main problem id to find the user to solve this we use middleware called auth which will add the current login user into the request body
+    await User.findByIdAndUpdate(       //find the user from db and update it 
+        //for finding the user
+        req.user._id,       
+        //for update
+        {
+            $set:{
+                refreshToken:undefined  //removing the refresh token
+            }
+        },
+        {
+            new:true
+        }
+    )
+
+    const option = {    //with this the cookie is only modified by the server not by frontend
+        httpOnly: true,
+        secure:true
+    }
+    return res
+    .status(200)
+    .clearCookie("accessToken",option)      //clearing the cookie
+    .clearCookie("refreshToken",option)     //clearing the cookie
+    .json(
+        new ApiResponse(
+            200,{},"user log out successfully"
+        )
+    )
+})
+
+
+export { 
+    registerUSer,
+    loginUser,
+    logOutUser
+
+ }
