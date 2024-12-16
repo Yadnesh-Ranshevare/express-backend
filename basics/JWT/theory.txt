@@ -1,0 +1,30 @@
+it use for token based authentication
+for more details:-
+https://jwt.io/
+
+
+
+jwt is use to create the token out of the user data using the secrete key 
+syntax for encoding the token:-
+    jwt.sign( payload,secreteKey )
+
+    payload:- content from user data on the basis of witch the token will from
+    secreteKey:- a sequence of random character 
+    
+this method will encode the payload
+
+
+we can also verify that the token was right or not
+syntax for decoding the token:- 
+    jwt.verify( token,secreteKey )
+
+    token:- it is token created by the .sign method 
+    secreteKey:- it is the same key we use for encoding the token
+
+this method will return the payload and a timestamp( at what time that token is form )  
+
+
+
+NOTE:-
+    1. secreteKey is a top secrete component of the code if it get leaked anyone can manipulate tha data therefore we need to initialize this key inside the .env file
+    2. in payload we can give as much data as you want but in mongodb _id is more than enough as a payload 
