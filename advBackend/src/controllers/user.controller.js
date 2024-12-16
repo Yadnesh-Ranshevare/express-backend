@@ -7,11 +7,13 @@ import jwt from "jsonwebtoken"
 
 
 const generateAccessAndRefreshToken = async( userId ) => {
+    // console.log("inside the generateAccessAndRefreshToken")
     try {
         const user = await User.findById(userId)
         const accessToken = user.generateAccessToken()
         const refreshToken = user.generateRefreshToken()
         // console.log(user,accessToken,refreshToken)
+
         
         user.refreshToken = refreshToken        //storing the refresh token into the database
         await user.save({validateBeforeSave:false})     //saving the new database
@@ -168,7 +170,7 @@ const loginUser = asyncHandler( async( req,res ) => {
 
     //step 6: send the cookie
     const loggedInUser = await User.findById(user._id).select("-password -refreshToken")
-    console.log(loggedInUser)
+    // console.log(loggedInUser)
     const option = {    //with this the cookie is only modified by the server not by frontend
         httpOnly: true,
         secure:true
@@ -221,48 +223,52 @@ const logOutUser = asyncHandler( async(req,res)=>{
 })
 
 const refreshAccessToken = asyncHandler(async(req,res)=>{   //will refresh the access token once it expire
-    const incomingRefreshToken = req.cookie.refreshToken  || req.body.refreshToken  //gating the refresh token form cookie or req body
+    const incomingRefreshToken = req.cookies.refreshToken  || req.body.refreshToken  //gating the refresh token form cookie or req body
     if(!incomingRefreshToken){
         throw new apiError(400,"unauthorized error")
     }
+    // console.log(incomingRefreshToken)
 
    
     try {
         const decodedToken = jwt.verify(incomingRefreshToken,process.env.REFRESH_TOKEN_SECRETE)    //refresh token is formed on id only
 
         const user = await User.findById(decodedToken?._id)
-    
+        // console.log(user)
         if(!user){
             throw new apiError(401, "invalid refresh token")
         }
-    
-        if(incomingRefreshToken !== user?.refreshToken){
-            throw new apiError(401,"refresh token s expired or used")
-        }
-    
+        // console.log(user?.refreshToken)
+        // if(incomingRefreshToken !== user?.refreshToken){
+        //     throw new apiError(401,"refresh token s expired or used")
+        // }
+        // console.log(incomingRefreshToken)
     
         const option={
             httpOnly: true,
             secure:true
         }
     
-        const {accessToken,newRefreshToken} = await generateAccessAndRefreshToken(user._id)
+        const {accessToken, refreshToken} = await generateAccessAndRefreshToken(user._id)
+        // console.log(accessToken);
+        // console.log(refreshToken);
+        
         return res
         .status(200)
         .cookie("accessToken",accessToken,option)
-        .cookie("refreshToken",newRefreshToken,option)
+        .cookie("refreshToken",refreshToken,option)
         .json(
             new ApiResponse(
                 200,
                 {
                     accessToken,
-                    newRefreshToken
+                    refreshToken
                 },
                 "access token refreshed"
             )
         )
     } catch (error) {
-        throw new apiError(401,"invalid refresh token")
+        throw new apiError(401,"invalid refresh tokens")
     }
 
 
