@@ -1,0 +1,18 @@
+bcrypt is a nodejs package to encrypt the data 
+
+syntax for encoding:-
+    bcrypt.hash( data,hash_round )
+
+    data:- data you want to encrypt
+    hash_round:- when you are hashing your data, the module will go through a series of rounds to give you a secure hash
+
+this method will return the promise with the encrypted data as a callback
+
+syntax for comparing the encode data with original:-
+    bcrypt.compare( encryptedData,originalData )
+
+    this decode the encryptedData into its original form and compare it with originalData and return the true or false 
+
+NOTE:- 
+    1. we use this package to encrypt the password in database
+    2. this methods may take some time to execute or may failed so we write them in async function with try cath( this is not compulsory though )
