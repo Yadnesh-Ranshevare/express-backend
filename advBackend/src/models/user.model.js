@@ -31,6 +31,12 @@ const userSchema = new Schema({
     coverImage:{
         type:String,        //cloudinary url if img doesn't exist cloudinary will return the empty string  
     },
+    watchHistory:[
+        {
+            type: Schema.Types.ObjectId,
+            ref:"Video"
+        }
+    ],
     password:{
         type:String,
         required:[ true || 'password is required' ]
