@@ -1,5 +1,17 @@
 import { Router } from "express";
-import { loginUser, logOutUser, refreshAccessToken, registerUSer } from "../controllers/user.controller.js";
+import { 
+    changeCurrentPAssword, 
+    getCurrentUser, 
+    getUserChannelProfile, 
+    getWatchHistory, 
+    loginUser, 
+    logOutUser, 
+    refreshAccessToken, 
+    registerUSer, 
+    updateAccountDetail, 
+    updateUserAvatar, 
+    updateUserCoverImage 
+} from "../controllers/user.controller.js";
 import {upload} from "../middleware/multer.middleware.js"
 import { verifyJWT } from "../middleware/auth.middleware.js";
 
@@ -34,7 +46,23 @@ router.route("/login").post(loginUser)
 
 //secured routes
 router.route("/logout").post(verifyJWT,logOutUser)
+
 router.route("/refresh-token").post(refreshAccessToken)
+
+router.route("/change-password",post(verifyJWT,changeCurrentPAssword))
+
+router.route("/current-user").get(verifyJWT,getCurrentUser)
+
+router.route("/update-account").patch(verifyJWT,updateAccountDetail)
+
+router.route("/avatar").patch(verifyJWT,upload.single("avatar"),updateUserAvatar)
+
+router.route("/coverImage").patch(verifyJWT,upload.single("coverImage"),updateUserCoverImage)
+
+router.route("/c/:username").get(verifyJWT,getUserChannelProfile)       //as geeing info via url need to use dynamic url 
+
+router.route("/history").get(verifyJWT,getWatchHistory)
+
 
 
 
