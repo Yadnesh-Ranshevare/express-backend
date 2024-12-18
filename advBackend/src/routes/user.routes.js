@@ -2,8 +2,6 @@ import { Router } from "express";
 import { 
     changeCurrentPAssword, 
     getCurrentUser, 
-    getUserChannelProfile, 
-    getWatchHistory, 
     loginUser, 
     logOutUser, 
     refreshAccessToken, 
@@ -59,9 +57,7 @@ router.route("/avatar").patch(verifyJWT,upload.single("avatar"),updateUserAvatar
 
 router.route("/coverImage").patch(verifyJWT,upload.single("coverImage"),updateUserCoverImage)
 
-router.route("/c/:username").get(verifyJWT,getUserChannelProfile)       //as geeing info via url need to use dynamic url 
 
-router.route("/history").get(verifyJWT,getWatchHistory)
 
 
 
