@@ -48,11 +48,12 @@ const userSchema = new Schema({
 
 //pre is a hook use as a middleware which perform certain task just before the saving the data in backend
 userSchema.pre("save",async function(next){     //as encryption may take time we are using async await
-    if(this.isModified("password")){
+    if(this.isModified("password")){        //this will return the true only if the password felid is change otherwise return false 
+        //we only want to encrypt the password when password felid id changed otherwise don't run this method
         this.password = await bcrypt.hash(this.password,10)       //encrypting our password
         next()
     }else{
-        return next()
+        return next()       //if password felid doesn't change then don't do anything
     }
 })
 
