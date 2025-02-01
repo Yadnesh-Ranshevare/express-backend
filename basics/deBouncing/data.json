@@ -1,0 +1,183 @@
+[
+    {
+      "id": 1,
+      "name": "Spaghetti Bolognese",
+      "cuisine": "Italian",
+      "category": "Main Course"
+    },
+    {
+      "id": 2,
+      "name": "Sushi",
+      "cuisine": "Japanese",
+      "category": "Main Course"
+    },
+    {
+      "id": 3,
+      "name": "Chicken Tikka Masala",
+      "cuisine": "Indian",
+      "category": "Main Course"
+    },
+    {
+      "id": 4,
+      "name": "Tacos",
+      "cuisine": "Mexican",
+      "category": "Main Course"
+    },
+    {
+      "id": 5,
+      "name": "Paella",
+      "cuisine": "Spanish",
+      "category": "Main Course"
+    },
+    {
+      "id": 6,
+      "name": "Falafel",
+      "cuisine": "Middle Eastern",
+      "category": "Appetizer"
+    },
+    {
+      "id": 7,
+      "name": "Peking Duck",
+      "cuisine": "Chinese",
+      "category": "Main Course"
+    },
+    {
+      "id": 8,
+      "name": "Ratatouille",
+      "cuisine": "French",
+      "category": "Main Course"
+    },
+    {
+      "id": 9,
+      "name": "Dim Sum",
+      "cuisine": "Chinese",
+      "category": "Appetizer"
+    },
+    {
+      "id": 10,
+      "name": "Bangers and Mash",
+      "cuisine": "British",
+      "category": "Main Course"
+    },
+    {
+        "id": 11,
+        "name": "Moussaka",
+        "cuisine": "Greek",
+        "category": "Main Course"
+      },
+      {
+        "id": 12,
+        "name": "Beef Wellington",
+        "cuisine": "British",
+        "category": "Main Course"
+      },
+      {
+        "id": 13,
+        "name": "Shakshuka",
+        "cuisine": "Middle Eastern",
+        "category": "Breakfast"
+      },
+      {
+        "id": 14,
+        "name": "Goulash",
+        "cuisine": "Hungarian",
+        "category": "Main Course"
+      },
+      {
+        "id": 15,
+        "name": "Ceviche",
+        "cuisine": "Peruvian",
+        "category": "Appetizer"
+      },
+      {
+        "id": 16,
+        "name": "Fried Chicken",
+        "cuisine": "American",
+        "category": "Main Course"
+      },
+      {
+        "id": 17,
+        "name": "Lasagna",
+        "cuisine": "Italian",
+        "category": "Main Course"
+      },
+      {
+        "id": 18,
+        "name": "Pizza Margherita",
+        "cuisine": "Italian",
+        "category": "Main Course"
+      },
+      {
+        "id": 19,
+        "name": "Ramen",
+        "cuisine": "Japanese",
+        "category": "Main Course"
+      },
+      {
+        "id": 20,
+        "name": "Banh Mi",
+        "cuisine": "Vietnamese",
+        "category": "Sandwich"
+      },
+      {
+        "id": 21,
+        "name": "Tom Yum Goong",
+        "cuisine": "Thai",
+        "category": "Soup"
+      },
+      {
+        "id": 22,
+        "name": "Croissant",
+        "cuisine": "French",
+        "category": "Pastry"
+      },
+      {
+        "id": 23,
+        "name": "Paella Valenciana",
+        "cuisine": "Spanish",
+        "category": "Main Course"
+      },
+      {
+        "id": 24,
+        "name": "Chili con Carne",
+        "cuisine": "Mexican",
+        "category": "Main Course"
+      },
+      {
+        "id": 25,
+        "name": "Sauerbraten",
+        "cuisine": "German",
+        "category": "Main Course"
+      },
+      {
+        "id": 26,
+        "name": "Biryani",
+        "cuisine": "Indian",
+        "category": "Main Course"
+      },
+      {
+        "id": 27,
+        "name": "Hummus",
+        "cuisine": "Middle Eastern",
+        "category": "Appetizer"
+      },
+      {
+        "id": 28,
+        "name": "Pasta Carbonara",
+        "cuisine": "Italian",
+        "category": "Main Course"
+      },
+      {
+        "id": 29,
+        "name": "Kimchi",
+        "cuisine": "Korean",
+        "category": "Side Dish"
+      },
+      {
+        "id": 30,
+        "name": "Grilled Cheese Sandwich",
+        "cuisine": "American",
+        "category": "Sandwich"
+      }
+  ]
+  
