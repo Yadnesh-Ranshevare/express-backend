@@ -12,12 +12,14 @@ async function getData(agr) {
             const data = await response.json();  // Parse the response body as JSON
             
             // Check if there's data to display
-            if (data.sendData && data.sendData.length > 0) {
-                console.log(data.sendData[0].name);  // Logs the name of the first item
+            if (data && data.length > 0) {
 
-                const item = document.createElement("p");
-                item.innerText = data.sendData[0].name;  // Correct method to set text
-                document.body.appendChild(item);
+                data.forEach(item => {
+                    const newItem = document.createElement("p");
+                    newItem.innerText = item.name;  // Correct method to set text
+                    document.body.appendChild(newItem);
+                });
+
             } else {
                 const item = document.createElement("p");
                 item.innerText = "no matching data";  // Correct method to set text
