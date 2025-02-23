@@ -1,4 +1,4 @@
-## connecting with emil service
+## connecting with SMTP server
 ```js
 let transporter = await nodemailer.createTransport({
     host: "your_host",
