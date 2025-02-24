@@ -5,8 +5,8 @@ import twilio from 'twilio';
 const client = twilio(accountSid, authToken);
 
 // client.messages.create({
-//     to: '+918652095488',
-//     from: '+13098931421',
+//     to: '+91865209xxxx',
+//     from: '+130989XXXXX',
 //     body: 'Hello from Node.js'
 // }).then(message => console.log(message.sid));
 
