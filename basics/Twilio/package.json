@@ -1,0 +1,15 @@
+{
+  "name": "twilio",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "yadnesh ranshevare",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "twilio": "^5.4.5"
+  }
+}
