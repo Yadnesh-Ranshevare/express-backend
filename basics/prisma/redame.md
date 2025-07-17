@@ -2,6 +2,8 @@
 1. [Introduction](#introduction)
 2. [Initialization](#initialization)
 3. [Connecting Prisma With Mongodb](#connecting-prisma-with-mongodb)
+4. [Install Prisma Client](#install-prisma-client)
+5. [CURD operation](#curd-operation)
 
 
 # Introduction
@@ -75,9 +77,9 @@ DATABASE_URL="prisma+postgres://localhost:51213/?api_key=eyJkYXRhYmFzZVVybCI6InB
 # Connecting Prisma With Mongodb
 1. change the database url from `.env` file
 ```env
-DATABASE_URL="your-db-url"
+DATABASE_URL="your-mongodb-url"
 ```
-2. change the provider from the file `prisma/schema.prisma`
+2. change the `db.provider` from the file `prisma/schema.prisma`
 ```prisma/schema.prisma
 generator client {
   provider = "prisma-client-js"
@@ -85,11 +87,108 @@ generator client {
 }
 
 datasource db {
-  provider = "mongodb"       // add mongodb here
+  provider = "mongodb"       // add mongodb as provider for connecting with mongodb
   url      = env("DATABASE_URL")
 }
 ```
+3. configure your Database schema in `prisma/schema.prisma` file
+```prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
 
+datasource db {
+  provider = "mongodb"      
+  url      = env("DATABASE_URL")
+}
+
+
+// user schema
+model User {
+  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  name String? 
+  email String @unique
+  password String
+  posts Post[]
+}
+
+// post schema
+model Post {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  slug String
+  title String
+  body String
+  author   User   @relation(fields: [authorId], references: [id])
+  authorId String @db.ObjectId
+}
+```
+[click here to learn more about schema](https://www.prisma.io/docs/orm/prisma-schema/data-model/models)
+
+
+[Go To Top](#content)
+
+---
+# Install Prisma Client
+
+- Prisma Client is an auto-generated JavaScript/TypeScript library that lets you interact with your database using simple JS code instead of writing raw SQL or complex MongoDB queries.
+
+- It’s created by Prisma based on your data model (schema.prisma).
+
+To get started with Prisma Client, you need to install the `@prisma/client` package:
+
+```bash
+npm install @prisma/client
+```
+
+Then, run `prisma generate` which reads your Prisma schema and generates the Prisma Client.
+```bash
+npx prisma generate
+```
+
+Whenever you update your Prisma schema, you will need to run the `prisma db push` command to create new indexes and regenerate Prisma Client.
+
+**Note: in `prisma/schema.prisma` you can define where you can generate the client while will generate the client at designated location by default the location is set to `node_modules/@prisma/client`**
+
+```prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"      // give the path to generate the client here 
+}
+```
+
+### now you can import the prisma client 
+1. if the generator is present at custom location
+```js
+import { PrismaClient } from "./generated/prisma/index.js"  // make sure to use proper path to index.js in generated code
+const prisma = new PrismaClient()
+```
+2. if generator is at `node_modules/@prisma/client` (default location)
+```js
+import { PrismaClient } from '@prisma/client';
+const prisma = new PrismaClient()
+```
+
+### Best practices for importing the prisma client
+- from above example we can see that we need two lines to use prisma properly
+- one line for importing the prisma client
+- second line for accessing `prisma` from the prisma client
+- Therefor instead of writing this two line every time we want to use `prisma` which is hard to understand we create new file `prisma/index.js`
+```js
+import { PrismaClient } from '../generated/prisma/index.js'
+
+const prisma = new PrismaClient()
+
+export default prisma
+```
+- now every time we want to use `prisma` we can import them from this file which can be easy to understand
+
+[Go To Top](#content)
+
+---
+# CURD operation
+
+[To learn more about CURD operation](https://www.prisma.io/docs/orm/prisma-client/queries/crud)
 
 [Go To Top](#content)
 
