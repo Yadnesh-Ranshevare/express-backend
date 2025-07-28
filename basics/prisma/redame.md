@@ -125,6 +125,11 @@ model Post {
 ```
 [click here to learn more about schema](https://www.prisma.io/docs/orm/prisma-schema/data-model/models)
 
+For relational databases, use db push command to push the example schema to your own database
+```bash
+npx prisma db push
+```
+
 
 [Go To Top](#content)
 
@@ -189,6 +194,163 @@ export default prisma
 # CURD operation
 
 [To learn more about CURD operation](https://www.prisma.io/docs/orm/prisma-client/queries/crud)
+- [create](#1-create)
+- [Read](#2-read)
+- [Update](#3-update)
+- [Delete](#4-delete)
+
+## 1. create
+- creating a single record
+```ts
+const user = await prisma.user.create({
+  data: {
+    email: 'elsa@prisma.io',
+    name: 'Elsa Prisma',
+  },
+})
+```
+
+- Create multiple records
+```ts
+const createMany = await prisma.user.createMany({
+  data: [
+    { name: 'Bob', email: 'bob@prisma.io' },
+    { name: 'Bobo', email: 'bob@prisma.io' }, // Duplicate unique key!
+    { name: 'Yewande', email: 'yewande@prisma.io' },
+    { name: 'Angelique', email: 'angelique@prisma.io' },
+  ],
+  skipDuplicates: true, // Skip 'Bobo'
+})
+```
+
+> Note skipDuplicates is not supported when using MongoDB, SQLServer, or SQLite.
+
+- createManyAndReturn
+```ts
+const users = await prisma.user.createManyAndReturn({
+  data: [
+    { name: 'Alice', email: 'alice@prisma.io' },
+    { name: 'Bob', email: 'bob@prisma.io' },
+  ],
+})
+```
+
+## 2. Read
+
+- Get all records
+```ts
+const users = await prisma.user.findMany()
+```
+- Get the first record that matches a specific criteria
+```ts
+// By ID
+const user = await prisma.user.findFirst({
+  where: {
+    id: '60d5922d00581b8f0062e3a8',
+  },
+})
+```
+
+- Get the all the record that matches a specific criteria
+```ts
+const users = await prisma.user.findMany({
+  where: {
+    id: '60d5922d00581b8f0062e3a8',
+  },
+})
+```
+
+
+- Get record by ID or unique identifier / findUnique()
+
+>The following queries return a single record (findUnique()) by unique identifier or ID:
+```ts
+// By unique identifier
+const user = await prisma.user.findUnique({
+  where: {
+    email: 'elsa@prisma.io',
+  },
+})
+
+// By ID
+const user = await prisma.user.findUnique({
+  where: {
+    id: 99,
+  },
+})
+```
+## 3. Update
+- Update a single record
+```ts
+const updateUser = await prisma.user.update({
+  where: {
+    email: 'viola@prisma.io',
+  },
+  data: {
+    name: 'Viola the Magnificent',
+  },
+})
+```
+- Update multiple records
+```ts
+const updateUser = await prisma.user.updateMany({
+  where: {
+    email: 'viola@prisma.io',
+  },
+  data: {
+    name: 'Viola the Magnificent',
+  },
+})
+```
+- Update and return multiple records
+```ts
+const updateUser = await prisma.user.updateManyAndReturn({
+  where: {
+    email: 'viola@prisma.io',
+  },
+  data: {
+    name: 'Viola the Magnificent',
+  },
+})
+```
+- Update or create records
+```ts
+const upsertUser = await prisma.user.upsert({
+  where: {
+    email: 'viola@prisma.io',
+  },
+  update: {
+    name: 'Viola the Magnificent',
+  },
+  create: {
+    email: 'viola@prisma.io',
+    name: 'Viola the Magnificent',
+  },
+})
+```
+
+## 4. Delete
+- Delete a single record
+```ts
+const deleteUser = await prisma.user.delete({
+  where: {
+    email: 'bert@prisma.io',
+  },
+})
+```
+- Delete multiple records
+```ts
+const deleteUser = await prisma.user.deleteMany({
+  where: {
+    isVerified: false,
+  },
+})
+```
+- Delete all records
+```ts
+const deleteUsers = await prisma.user.deleteMany({})
+```
+
 
 [Go To Top](#content)
 
