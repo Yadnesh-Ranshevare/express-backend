@@ -31,7 +31,7 @@ npm i -D prisma
 
 # Initialization
 ```bash
-npm prisma init
+npx prisma init
 ```
 
 this will create the two new files i.e, `prisma/schema.prisma` and `.env`
