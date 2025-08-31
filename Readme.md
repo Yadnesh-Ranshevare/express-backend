@@ -20,6 +20,10 @@
 
 # Miscellaneous Topic
 1. [Md to Txt File conversion](./basics/Md-to-Txt/index.js)
+2. Functional Programming Techniques
+    - [Higher Order Function](./basics/FunctionalProgrammingTechniques/HigherOrderFunction/Readme.md)
+    - [Pure & Impure Function](./basics/FunctionalProgrammingTechniques/PureAndImpureFunction/readme.md)
+    - [Side Effect](./basics/FunctionalProgrammingTechniques/SideEffects/readme.md) 
 
 
 
