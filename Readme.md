@@ -24,7 +24,7 @@
     - [Higher Order Function](./basics/FunctionalProgrammingTechniques/HigherOrderFunction/Readme.md)
     - [Pure & Impure Function](./basics/FunctionalProgrammingTechniques/PureAndImpureFunction/readme.md)
     - [Side Effect](./basics/FunctionalProgrammingTechniques/SideEffects/readme.md) 
-
+    - [Lazy and Eager Evaluation](./basics/FunctionalProgrammingTechniques/LazyAndEagerEvaluation/Readme.md)
 
 
 ### advBackend is a simple backend project implementing Authentication System using express, JWT, multer, mongoDb, cloudinary, and bcrypt 
