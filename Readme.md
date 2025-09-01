@@ -20,11 +20,13 @@
 
 # Miscellaneous Topic
 1. [Md to Txt File conversion](./basics/Md-to-Txt/index.js)
-2. Functional Programming Techniques
+2. [Functional Programming Techniques](./basics/FunctionalProgrammingTechniques/Readme.md)
     - [Higher Order Function](./basics/FunctionalProgrammingTechniques/HigherOrderFunction/Readme.md)
     - [Pure & Impure Function](./basics/FunctionalProgrammingTechniques/PureAndImpureFunction/readme.md)
     - [Side Effect](./basics/FunctionalProgrammingTechniques/SideEffects/readme.md) 
     - [Lazy and Eager Evaluation](./basics/FunctionalProgrammingTechniques/LazyAndEagerEvaluation/Readme.md)
+    - [Functional Composition & Method chaining](./basics/FunctionalProgrammingTechniques/FunctionalCompositionAndMethodChaning/Readme.md)
+    - [Immutability & Declarative Programming](./basics/FunctionalProgrammingTechniques/ImmutabilityDeclarativeProgramming/Readme.md)
 
 
 ### advBackend is a simple backend project implementing Authentication System using express, JWT, multer, mongoDb, cloudinary, and bcrypt 
