@@ -27,6 +27,7 @@
     - [Lazy and Eager Evaluation](./basics/FunctionalProgrammingTechniques/LazyAndEagerEvaluation/Readme.md)
     - [Functional Composition & Method chaining](./basics/FunctionalProgrammingTechniques/FunctionalCompositionAndMethodChaning/Readme.md)
     - [Immutability & Declarative Programming](./basics/FunctionalProgrammingTechniques/ImmutabilityDeclarativeProgramming/Readme.md)
+    - [Curring](./basics/FunctionalProgrammingTechniques/Curryin/Readme.md)
 
 
 ### advBackend is a simple backend project implementing Authentication System using express, JWT, multer, mongoDb, cloudinary, and bcrypt 
