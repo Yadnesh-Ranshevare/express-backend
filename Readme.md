@@ -29,6 +29,7 @@
     - [Functional Composition & Method chaining](./basics/JavaScriptConcept/FunctionalProgrammingTechniques/FunctionalCompositionAndMethodChaning/Readme.md)
     - [Immutability & Declarative Programming](./basics/JavaScriptConcept/FunctionalProgrammingTechniques/ImmutabilityDeclarativeProgramming/Readme.md)
     - [Curring](./basics/JavaScriptConcept/FunctionalProgrammingTechniques/Curryin/Readme.md)
+4. [Event Loop](./basics/JavaScriptConcept/EventLoop/readme.md)
     
 
 ### advBackend is a simple backend project implementing Authentication System using express, JWT, multer, mongoDb, cloudinary, and bcrypt 

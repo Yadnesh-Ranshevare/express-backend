@@ -8,4 +8,3 @@ Here’s a simple breakdown of functional programming techniques:
 5. [Functional Composition & Method chaining](./FunctionalCompositionAndMethodChaning/Readme.md)
 6. [Immutability & Declarative Programming](./ImmutabilityDeclarativeProgramming/Readme.md)
 7. [Curring](./Curryin/Readme.md)
-8. [Closure](./Clouser/readme.md)
