@@ -16,6 +16,7 @@
 4. [nodemailer](./basics/nodemailer/Readms.md)
 5. [Twilio](./basics/Twilio/index.js)
 6. [Prisma](./basics/prisma/redame.md)
+7. [Web Socket](./basics/webSocket/readme.md)
 
 
 # Miscellaneous Topic
@@ -30,6 +31,7 @@
     - [Immutability & Declarative Programming](./basics/JavaScriptConcept/FunctionalProgrammingTechniques/ImmutabilityDeclarativeProgramming/Readme.md)
     - [Curring](./basics/JavaScriptConcept/FunctionalProgrammingTechniques/Curryin/Readme.md)
 4. [Event Loop](./basics/JavaScriptConcept/EventLoop/readme.md)
+5. [JS Objects](./basics/JavaScriptConcept/Objects/readme.md)
     
 
 ### advBackend is a simple backend project implementing Authentication System using express, JWT, multer, mongoDb, cloudinary, and bcrypt 
