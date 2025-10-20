@@ -2,7 +2,11 @@
 1. [What are object?](#what-are-object)
 2. [How they stored in memory?](#how-they-stored-in-memory)
 3. [How to copy an object?](#how-to-copy-an-object)
-
+    - [Create duplicate](#1-creating-the-duplicate-of-the-current-object)
+    - [Via reference](#2-copy-via-reference)
+    - [Shallow Copy](#3-shallow-copy)
+    - [Deep copy](#4-deep-copy)
+4. [Object.assign()](#objectassign)
 
 ---
 
@@ -241,6 +245,7 @@ Here:
     │ user2 → ●─┘  |          |                              │
     └──────────────┘          └──────────────────────────────┘
     ```
+    even though `user1` update the object since `user2` has the reference to same object value of `user2` object will also change 
 
 
 ### 3. Shallow copy
@@ -254,12 +259,12 @@ const user = {
     name: "Bob",
     address: {
         city: "New York",
-        zip: 10001,
     },
 }
 
 const shallowCopy = {...user}
 
+// update the copied version
 shallowCopy.name = "Charlie";
 shallowCopy.address.city = "Los Angeles";
 
@@ -268,7 +273,7 @@ console.log(shallowCopy);
 ```
 **memory reference**
 ```
-# Shallow Copy Memory Reference
+# before update
 
 Stack:                             Heap:
 ┌──────────────┐          ┌─────────────────────────────────────────────────────────┐
@@ -276,6 +281,15 @@ Stack:                             Heap:
 │              |          |                            |─────▶{ city: "Mumbai" }   | 
 | copy → ●─────┼─────────>│ { name: "Bob", address:●─}─┘                            |
 └──────────────┘          └─────────────────────────────────────────────────────────┘
+
+# after update
+
+Stack:                             Heap:
+┌──────────────┐          ┌─────────────────────────────────────────────────────────────────┐
+│ user → ●─────┼─────────>│ { name: "Bob", address:●─────}─┐                                │
+│              |          |                                |─────▶{ city: "Los Angeles" }   | 
+| copy → ●─────┼─────────>│ { name: "Charlie", address:●─}─┘                                |
+└──────────────┘          └─────────────────────────────────────────────────────────────────┘
 ```
 
 
@@ -284,6 +298,200 @@ Stack:                             Heap:
 { name: 'Bob', address: { city: 'Los Angeles', zip: 10001 } }
 { name: 'Charlie', address: { city: 'Los Angeles', zip: 10001 } }
 ```
+> think of it as a spreading one object onto another and as you spread the top level values get spread directly but in case on nested values it spread their reference instead on actual value
+
+### 4. Deep copy
+A deep copy creates a completely independent clone of an object,
+including all nested objects inside it.
+
+So — the new object does not share any memory reference with the original.
+
+**Example:**
+```js
+const user1 = {
+    name:"Alice"
+    address:{
+        city:"Mumbai"
+    }
+}
+
+const user2  = JSON.parse(JSON.stringify(user1))
+```
+Here:
+- first we convert our whole object into the string to avoid the coping the reference
+- then we parse it back into the JSON to get our actual payload
+- we assign that payload to new object to create deep copy without any reference of original object
+
+**Inside memory**
+```
+Stack:                           Heap:
+┌──────────────┐          ┌─────────────────────────────────────────────────────────────┐
+│ user1 → ●────┼─────────>│ { name: "Alice" address:●─}──────>{ city: "Mumbai" }        │
+│ user2 → ●────┼─────────>│ { name: "Alice" address:●─}──────>{ city: "Mumbai" }        │
+└──────────────┘          └─────────────────────────────────────────────────────────────┘
+```
+>this is similar to that of [Create duplicate objet](#1-creating-the-duplicate-of-the-current-object) but there we can just creating the identical object and here we are actually using first object to clone the other 
+
+#### structuredClone()
+`structuredClone()` is a built-in function that creates a deep copy of almost any JavaScript object — including nested objects, arrays, dates, maps, sets, and more.
+
+**Syntax**
+
+```js
+const clone = structuredClone(value);
+```
+**Example**
+```js
+const user = {
+  name: "Yadnesh",
+  address: { city: "Pune", pin: 411001 },
+  hobbies: ["coding", "sketching"]
+};
+
+const deepCopy = structuredClone(user);
+
+// modify the copy
+deepCopy.address.city = "Mumbai";
+deepCopy.hobbies.push("anime");
+
+console.log(user);
+console.log(deepCopy);
+```
+**Output:**
+```
+user = {
+  name: "Yadnesh",
+  address: { city: "Pune", pin: 411001 },
+  hobbies: ["coding", "sketching"]
+}
+
+deepCopy = {
+  name: "Yadnesh",
+  address: { city: "Mumbai", pin: 411001 },
+  hobbies: ["coding", "sketching", "anime"]
+}
+```
+
+
+
+[Go To Top](#content)
+
+---
+
+# Object.assign()
+- It’s used to copy or merge objects.
+- Copies all enumerable (visible) properties from one or more source objects into a target object
+- Creates only [shallow copy](#3-shallow-copy) (nested objects share reference) of the source object
+
+
+### Syntax:
+
+```js
+Object.assign(target, source);
+```
+It copies all properties from source into target.
+
+### Example
+```js
+const user2 = {
+    name: "Yadnesh",
+    age: 22,
+};
+
+const address = {
+    city: "Pune",
+    pin: 411001,
+};
+
+Object.assign(user2, address);
+console.log(user2);
+console.log(address);
+```
+**Output:**
+```
+{ name: 'Yadnesh', age: 22, city: 'Pune', pin: 411001 }
+{ city: 'Pune', pin: 411001 }
+```
+> Note: it merge the shallow copy of the source object into target
+
+```js
+const user2 = {
+    name: "Yadnesh",
+    age: 22,
+};
+
+const address = {
+    nation:"india",
+    city:{
+        name:"pune",
+        pin:411001,
+    }
+};
+
+// shallow copy of the address will be merged into the user2
+Object.assign(user2, address);
+
+user2.city.name = "los angeles";    // change in both -> shallow copy
+user2.nation = "USA";               // change only in user2
+
+console.log(user2);
+console.log(address);
+```
+**Output:**
+```
+{
+  name: 'Yadnesh',
+  age: 22,
+  nation: 'USA',
+  city: { name: 'los angeles', pin: 411001 }
+}
+{ nation: 'india', city: { name: 'los angeles', pin: 411001 } }
+```
+
+### It can also returns the target object
+```js
+const user2 = {
+    name: "Yadnesh",
+    age: 22,
+};
+
+const address = {
+    city: "Pune",
+    pin: 411001,
+};
+
+const user3 = Object.assign(user2, address);    // target -> user2
+console.log(user3);
+console.log(user2);
+console.log(address);
+```
+**Output:**
+```
+{ name: 'Yadnesh', age: 22, city: 'Pune', pin: 411001 }
+{ name: 'Yadnesh', age: 22, city: 'Pune', pin: 411001 }
+{ city: 'Pune', pin: 411001 }
+```
+
+### Used for shallow copy
+> make sure you know about [shallow copy](#3-shallow-copy)
+```js
+const user = { name: "Alice" };
+const copy = Object.assign({}, user);
+
+console.log(copy); // { name: "Alice" }
+```
+Here:
+- we have pass target as a empty object (`{}`) and source as a `user`
+- since target is empty whatever value the `user` object have will be copied into this empty object 
+- after the value is copied the updated target object will get return creating the shallow copy of the original object
+
+### Summary table:
+| Case                        | What it does          | Copy type |
+| --------------------------- | --------------------- | --------- |
+| `Object.assign({}, obj)`    | makes a new copy      | Shallow   |
+| `Object.assign(obj1, obj2)` | merges obj2 into obj1 | Shallow   |
+
+
 
 [Go To Top](#content)
 
