@@ -6,7 +6,9 @@
     - [Via reference](#2-copy-via-reference)
     - [Shallow Copy](#3-shallow-copy)
     - [Deep copy](#4-deep-copy)
-4. [Object.assign()](#objectassign)
+4. [Reference Breaking](#reference-breaking)
+5. [Object.assign()](#objectassign)
+6. [Object.create() and Prototype Inheritance](#objectcreate-and-prototype-inheritance)
 
 ---
 
@@ -120,6 +122,24 @@ Stack:                            Heap:
 │ user → ●─────┼──────────>│ name: "Yadnesh"        │
 └──────────────┘           │ address → ●────────────┼───> { city: "Mumbai" }
                            └────────────────────────┘
+```
+
+### Object methods are also treated as nested object
+```js
+const user = {
+  name: "Alice",
+  greet() {
+    console.log("Hello");
+  }
+};
+```
+**Memory-wise**
+```
+Stack:                  Heap:
+┌──────────────┐     ┌────────────────────────────────────────────────────┐
+│ user → ●─────┼────>│ { name: "Alice",                                   │
+│              │     │   greet: ●────────}─────────▶{ [Function greet] } │
+└──────────────┘     └────────────────────────────────────────────────────┘
 ```
 
 ### Garbage Collection
@@ -300,6 +320,7 @@ Stack:                             Heap:
 ```
 > think of it as a spreading one object onto another and as you spread the top level values get spread directly but in case on nested values it spread their reference instead on actual value
 
+
 ### 4. Deep copy
 A deep copy creates a completely independent clone of an object,
 including all nested objects inside it.
@@ -372,6 +393,105 @@ deepCopy = {
 }
 ```
 
+
+
+[Go To Top](#content)
+
+---
+# Reference Breaking
+Reference breaking happens when you reassign a property of an object that was shared by reference, so that the new object no longer points to the original object’s value.
+
+In simpler words:
+- Two objects initially share the same reference (like a pointer to the same value).
+- If you overwrite one of them, it breaks the link, and now they point to different values.
+
+### Example
+```js
+//  reference breaking
+const user = {
+    name: "Yadnesh",
+    address:{
+        city:"pune",
+    }
+};
+
+const copy = { ...user }; // shallow copy
+
+copy.address = { city:"mumbai"}; // breaking reference for nested object
+
+console.log(user);
+console.log(copy);
+```
+- Shallow copy copies references for nested objects.
+- Reference breaking happens when you reassign a nested object to a new object.
+- if you just change the value then you go inside that reference object and then change the value, but when you reassign the nested object it create the new reference by breaking the older one 
+
+**Inside memory**
+```
+# Before braking the reference
+
+Stack:                             Heap:
+┌──────────────┐          ┌─────────────────────────────────────────────────────────────┐
+│ user → ●─────┼─────────>│ { name: "Yadnesh", address:●─}─┐                            │
+│              |          |                                |─────▶{ city: "pune" }     | 
+| copy → ●─────┼─────────>│ { name: "Yadnesh", address:●─}─┘                            |
+└──────────────┘          └─────────────────────────────────────────────────────────────┘
+
+# copy.address = { city:"mumbai"};
+
+Stack:                           Heap:
+┌─────────────┐          ┌─────────────────────────────────────────────────────────────┐
+│ user → ●────┼─────────>│ { name: "Yadnesh" address:●─}──────>{ city: "pune" }        │
+│ copy → ●────┼─────────>│ { name: "Yadnesh" address:●─}──────>{ city: "Mumbai" }      │
+└─────────────┘          └─────────────────────────────────────────────────────────────┘
+```
+
+
+**Output:**
+```
+{ name: 'Yadnesh', address: { city: 'pune' } }
+{ name: 'Yadnesh', address: { city: 'mumbai' } }
+```
+
+### It also wok similarly with object methods
+```js
+const user = {
+    speak: function() {
+        console.log("Hello!");
+    }
+}
+
+const admin = {...user}
+
+// update the admin function
+admin.speak = function() {
+    console.log("Hi there!");
+}
+admin.speak(); // Hi there!
+user.speak()   // Hello!
+```
+**Inside memory**
+
+```
+# before update
+
+Stack:                             Heap:
+┌──────────────┐          ┌──────────────────────────────────────────┐
+│ user → ●─────┼─────────>│ { speak:●─}─┐                            │
+│              |          |             |─────▶[Function: Hello]    | 
+| admin → ●────┼─────────>│ { speak:●─}─┘                            |
+└──────────────┘          └──────────────────────────────────────────┘
+
+# after update
+
+Stack:                             Heap:
+┌──────────────┐          ┌────────────────────────────────────────────────┐
+│ user → ●─────┼─────────>│ { speak:●─}────▶[Function: Hello!]            │
+│              |          |                                                │
+| admin → ●────┼─────────>│ { speak:●─}────▶[Function: Hello there!]      |
+└──────────────┘          └────────────────────────────────────────────────┘
+```
+> think of it like: in case of nested object you go inside that object and then update its property therefor every other objet referring that nested object gets updated value, but in case of function referencing you change the function code without going inside its main body which lead to creation of new function with new referencing
 
 
 [Go To Top](#content)
@@ -492,6 +612,143 @@ Here:
 | `Object.assign(obj1, obj2)` | merges obj2 into obj1 | Shallow   |
 
 
+
+[Go To Top](#content)
+
+---
+# Object.create() and Prototype Inheritance
+- Creates a new object whose prototype points to the original object.
+- The new object does not copy the properties of the original — it inherits them.
+- If the original object changes after creating the new object, the new object can see those changes via the prototype chain.
+- Memory efficient because methods are shared.
+### Syntax
+
+```js
+const newObj = Object.create(proto);
+```
+`proto` → the object that will become the prototype of `newObj`.
+
+### Example
+
+```js
+const person = {
+    greet() {
+        console.log("Hello!");
+    },
+};
+const student = Object.create(person);
+
+// overriding greet method of person object
+person.greet = function () {
+    console.log("Hi there!");
+};
+
+student.greet(); // "Hi there!" → inherited from person
+```
+### Inside memory
+```
+Stack:                           Heap:
+┌──────────────┐          ┌───────────────────────────────────────┐
+│ student → ●──┼─────────>│ {}                                    │
+│ person → ●───┼─────────>│ { greet: ●──▶ [Function: Hi there!] } │
+└──────────────┘          └───────────────────────────────────────┘
+```
+### Explanation:
+- `person` is an object stored in heap, with a `greet` method.
+- `student` is created via `Object.create(person)`:
+    - It’s an empty object in heap.
+    - Its prototype points to `person`.
+- When you call `student.greet()`, JS looks up the prototype chain:
+    - `student` itself doesn’t have `greet()`.
+    - Checks `person` → finds `greet()` → executes it.
+- After overriding `person.greet`, `student.greet()` uses the new function because it’s inherited via prototype.
+
+### How it is differed from copying
+
+1. in deep copy we create complete independent version of original object
+    ```
+    Stack:                           Heap:
+    ┌──────────────┐          ┌─────────────────────────────────────────────────────────────┐
+    │ user1 → ●────┼─────────>│ { name: "Alice" address:●─}──────>{ city: "Mumbai" }        │
+    │ user2 → ●────┼─────────>│ { name: "Alice" address:●─}──────>{ city: "Mumbai" }        │
+    └──────────────┘          └─────────────────────────────────────────────────────────────┘
+    ```
+2. shallow copy we duplicate the top level data and share the reference for nested objects
+    ```
+    Stack:                             Heap:
+    ┌──────────────┐          ┌─────────────────────────────────────────────────────────┐
+    │ user → ●─────┼─────────>│ { name: "Bob", address:●─}─┐                            │
+    │              |          |                            |─────▶{ city: "Mumbai" }   | 
+    | copy → ●─────┼─────────>│ { name: "Bob", address:●─}─┘                            |
+    └──────────────┘          └─────────────────────────────────────────────────────────┘
+    ```
+3. copy via reference we shear the same reference for every object
+    ```
+    Stack:                           Heap:
+    ┌──────────────┐          ┌──────────────────────────────┐
+    │ user1 → ●─┬──┼─────────>│ { name: "Alice" }            │
+    │ user2 → ●─┘  |          |                              │
+    └──────────────┘          └──────────────────────────────┘
+    ```
+4. in object.create() we creates a new object whose prototype points to the original object
+    ```
+    Stack:                           Heap:
+    ┌──────────────┐          ┌───────────────────────────────────────┐
+    │ student → ●──┼─────────>│ {}                                    │
+    │ person → ●───┼─────────>│ { greet: ●──▶ [Function: Hi there!] } │
+    └──────────────┘          └───────────────────────────────────────┘
+    ```
+
+**In most of the copying technique changing the property of copied object may affect the property of original object**
+```js
+const person = {
+    greet() {
+        console.log("Hi there!");
+    },
+};
+
+// copy via reference
+const student = person
+
+student.name = "Yadnesh";
+
+console.log(person);
+console.log(student);
+```
+**Output:**
+```
+{ greet: [Function (anonymous)], name: 'Yadnesh' }
+{ greet: [Function (anonymous)], name: 'Yadnesh' }
+```
+- as they both hold the same reference
+- they same memory place is sheared among them and make changes at that sheared place
+- therefor changes made by one can be visible by other
+- Therefor adding an extra property into the copied version  affected the original also
+
+**This dose not happen in prototype inheritance**
+```js
+const person = {
+    greet() {
+        console.log("Hi there!");
+    },
+};
+const student = Object.create(person);
+
+student.name = "Yadnesh";
+
+console.log(person);
+console.log(student);
+student.greet();
+```
+**Output:**
+```
+{ greet: [Function: greet] }
+{ name: 'Yadnesh' }
+Hi there!
+```
+**Reason:**
+- Prototype inheritance creates a new object whose prototype points to the original object.
+- The new object does not copy the properties of the original — it inherits them.
 
 [Go To Top](#content)
 
