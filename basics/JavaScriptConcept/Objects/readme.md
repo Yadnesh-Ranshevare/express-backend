@@ -750,6 +750,242 @@ Hi there!
 - Prototype inheritance creates a new object whose prototype points to the original object.
 - The new object does not copy the properties of the original — it inherits them.
 
+### Multiple levels of prototype inheritance
+- JavaScript supports multiple levels of prototype inheritance.
+- You can have a chain of objects, where each object inherits from another — forming multiple levels.
+- you can have as many prototype levels as you want.
+- Each level can pass down its properties and methods to the next.
+
+**Example**
+```js
+const grandParent = {
+  sayHi() {
+    console.log("Hi from GrandParent!");
+  },
+};
+
+const parent = Object.create(grandParent);
+parent.walk = function () {
+  console.log("Walking...");
+};
+
+const child = Object.create(parent);
+child.name = "Yadnesh";
+
+child.sayHi(); // 👈 comes from grandParent
+child.walk();  // 👈 comes from parent
+```
+
+### Prototype Chaining
+Prototype chaining is the process JavaScript uses to look up properties or methods that are not found directly on an object — it keeps going “up the chain” through each object’s prototype until it finds the property or reaches `null`.
+
+**Example**
+```js
+const person = {
+  greet() {
+    console.log("Hello from person!");
+  }
+};
+
+const student = Object.create(person);
+student.name = "Yadnesh";
+
+student.greet(); // "Hello from person!"
+```
+
+- JS first checks inside the student object — ❌ not found
+- Then it looks at the object that student was created from (person) — ✅ found
+- So it stops searching and runs person.greet()
+- If it didn’t find it even in person, it would continue checking further up the chain (like Object.prototype)
+
+### `__proto__`
+- `__proto__` is a special hidden property that exists on every JavaScript object.
+- It points to the object’s prototype, i.e., the object it inherits from.
+- Think of it as a bridge that connects one object to another in the prototype chain.
+- it exist because JavaScript uses prototype-based inheritance, not class-based like Java or C++.
+
+**Example**
+```js
+const person = {
+  greet() {
+    console.log("Hello!");
+  },
+};
+
+const student = Object.create(person);
+
+console.log(student.__proto__ === person); // true
+student.greet(); // "Hello!"
+```
+What happens:
+
+- `student.__proto__` points to `person`
+- So when JS doesn’t find `greet()` inside `student`,
+it looks at `student.__proto__` (which is `person`)
+and finds `greet()` there 
+
+>You can manually link one object to another by setting its `__proto__` property.
+```js
+const person = {
+  greet() {
+    console.log("Hello from person!");
+  },
+};
+
+const student = {
+  name: "Yadnesh",
+};
+
+// manually set inheritance
+student.__proto__ = person;
+
+student.greet(); // "Hello from person!"
+```
+
+### Global Prototype or `Object.prototype`
+- Every object in JavaScript is built on top of another object called `Object.prototype`.
+- This is the global (root) prototype — the topmost parent in the prototype chain.
+
+**Example**
+```js
+const user = { name: "Yadnesh" };
+
+console.log(user.__proto__ === Object.prototype); // true
+```
+Output → `true`\
+That means your user object inherits from `Object.prototype`.
+
+**The Prototype Chain**
+```js
+user → Object.prototype → null
+```
+- Your object (`user`) doesn’t directly have all methods like `.toString()` or `.hasOwnProperty()`.
+- It inherits them from `Object.prototype`.
+
+That’s why this works 👇
+```js
+user.hasOwnProperty("name"); // true
+```
+Even though you never defined hasOwnProperty — it comes from the global prototype!
+
+
+
+### Why `__proto__` is not safe or recommended
+- `__proto__` works, but it has performance, security, and reliability issues — that’s why modern JavaScript recommends avoiding it.
+
+1. **It’s not part of the original JavaScript spec**
+    - `__proto__` was added later by browsers for compatibility.
+    - Different browsers used to implement it differently.
+    - So it was never guaranteed to behave the same everywhere.
+
+2. **It’s slow**
+    - Changing `__proto__` dynamically forces the JavaScript engine (like V8) to re-optimize internal object structures.
+    - That hurts performance — especially in large apps.
+    ```js
+    obj.__proto__ = anotherObj; // ❌ slow, breaks optimization
+    ```
+    That’s why `Object.create()` is preferred — it sets the prototype once at creation, efficiently.
+3. **It can break objects accidentally**
+    - Because `__proto__` is a real property name, you can accidentally overwrite it or mess up the prototype chain.
+    ```js
+    const obj = {};
+    obj.__proto__ = "not an object"; // ❌ breaks inheritance
+    ```
+    Now, JS can’t use that string as a prototype — your object might behave unpredictably.
+
+4. `It’s a security risk`
+    - Attackers can use prototype pollution — a vulnerability that changes built-in prototypes like Object.prototype via `__proto__`.
+    ```js
+    let userInput = JSON.parse('{"__proto__": {"isAdmin": true}}');
+    console.log({}.isAdmin); // true → polluted global prototype
+    ```
+    - It parses a JSON string that contains a key named `"__proto__"`.
+    - So userInput becomes:
+    ```js
+    { __proto__: { isAdmin: true } }
+    ```
+    - When this object is created, JS treats `"__proto__"` specially — it doesn’t store it as a normal key.
+    - Instead, it sets the object’s prototype (`Object.prototype`) to `{ isAdmin: true }`.
+    - So, it silently modifies the global prototype.
+    > modern JavaScript and JSON parsers (since around ES2019 / Node 12+) fixed this vulnerability — they no longer treat `__proto__` as a special property inside JSON.
+
+**Solution:**
+
+Instead of `__Proto__` use:
+- `Object.getPrototypeOf(obj)` -> Get prototype
+- `Object.setPrototypeOf(obj, proto)` -> Set prototype
+- `Object.create(proto)` -> Create object with prototype
+### `Object.getPrototypeOf(obj)`
+It’s a built-in JavaScript method that returns the prototype (the parent object) of a given object.
+
+**Example**
+```js
+const person = {
+  greet() {
+    console.log("Hello!");
+  }
+};
+
+const student = Object.create(person);
+
+console.log(Object.getPrototypeOf(student) === person); // true
+```
+Here:
+- student was created from person
+- So Object.getPrototypeOf(student) returns person — the object it inherits from
+
+**`__Proto__` vs `Object.getPrototypeOf()`**
+
+| `__proto__`                     | `Object.getPrototypeOf()` |
+| ------------------------------- | ------------------------- |
+| Old and less safe               | Modern and standardized   |
+| Can be modified accidentally    | Read-only and safe        |
+| Slower (affects performance)    | Optimized by JS engines   |
+| Should be avoided in production | Recommended to use        |
+
+
+### `Object.setPrototypeOf(obj, proto)`
+It’s a built-in JS method that sets (changes) the prototype of an existing object.
+
+**Syntax**
+```js
+Object.setPrototypeOf(targetObject, prototypeObject)
+```
+- `targetObject` → the object's prototype you want to change
+- `prototypeObject` → the object to be set as its prototype
+
+**Example**
+```js
+const person = {
+  greet() {
+    console.log("Hello from person!");
+  },
+};
+
+const student = { name: "Yadnesh" };
+
+// Set student's prototype to person
+Object.setPrototypeOf(student, person);
+
+student.greet(); // "Hello from person!"
+```
+Here:
+- Initially, `student` had no `greet()` method.
+- After setting `person` as its prototype, it inherits from `person`.
+
+| Feature / Aspect         | `__proto__`                                      | `Object.setPrototypeOf()`                    |
+| ------------------------ | ------------------------------------------------ | -------------------------------------------- |
+| **Type**                 | Property on every object                         | Built-in method in `Object`                  |
+| **Safety**               | ⚠️ Unsafe (can cause prototype pollution)        | ✅ Safer (explicit and controlled)            |
+| **Modification**         | Can be changed accidentally                      | Must be intentionally called                 |
+| **Effect Range**         | Can affect global prototype                      | Only affects the specified object            |
+| **Security Risk**        | High — attackers can inject malicious prototypes | Low — requires explicit function call        |
+| **Performance**          | Slower and inconsistent across engines           | More optimized and predictable               |
+| **Standardization**      | Legacy and non-standard                          | Modern ECMAScript standard                   |
+| **Usage Recommendation** | ❌ Avoid in production                            | ✅ Preferred for controlled prototype changes |
+
+
+
 [Go To Top](#content)
 
 ---

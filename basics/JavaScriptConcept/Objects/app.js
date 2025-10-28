@@ -113,18 +113,38 @@
 
 
 
-//  reference breaking
-const person = {
-    name: "Yadnesh",
-    address:{
-        city:"pune",
-    }
+// //  reference breaking
+// const person = {
+//     name: "Yadnesh",
+//     address:{
+//         city:"pune",
+//     }
+// };
+
+// const student = { ...person }; // shallow copy
+
+// student.address = { city:"mumbai"}; // breaking reference for nested object
+
+// console.log(person);
+// console.log(student);
+
+
+const person1 = {
+    name: "person1",
+    greet1() {
+        console.log("Hello!");
+    },
 };
 
-const student = { ...person }; // shallow copy
+const person2 = {
+    name: "person2",
+    greet2() {
+        console.log("Hi there!");
+    },
+};
 
-student.address = { city:"mumbai"}; // breaking reference for nested object
+const student = Object.create(person1);
+Object.setPrototypeOf(student, person2);
 
-console.log(person);
-console.log(student);
-
+console.log(student.greet1); // undefined
+student.greet2(); // "Hello!"
