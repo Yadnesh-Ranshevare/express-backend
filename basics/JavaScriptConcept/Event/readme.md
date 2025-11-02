@@ -6,7 +6,6 @@
 5. [Event Delegation](#event-delegation)
 6. [Custom Events](#custom-events)
 7. [Once, Passive, and Signal options](#once-passive-and-signal-options)
-8. [Combine multiple event types]
 
 ---
 # Introduction
