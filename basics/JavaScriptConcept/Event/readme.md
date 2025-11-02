@@ -1,8 +1,12 @@
 # Content
 1. [Introduction](#introduction)
 2. [Memory Management](#memory-management)
-2. [Event Flow & Propagation](#event-flow--propagation)
-3. Event Delegation
+3. [Event Flow & Propagation](#event-flow--propagation)
+4. [ Event Bubbling and Event Capturing](#event-bubbling-and-event-capturing)
+5. [Event Delegation](#event-delegation)
+6. [Custom Events](#custom-events)
+7. [Once, Passive, and Signal options](#once-passive-and-signal-options)
+8. [Combine multiple event types]
 
 ---
 # Introduction
@@ -173,7 +177,7 @@ So the function object isn’t copied — just a reference is stored.
 
 ---
 # Event Flow & Propagation
-“Event Flow & Propagation” is one of the most important and most misunderstood parts of how browser events actually work.
+Event Flow & Propagation is one of the most important yet often misunderstood concepts in how browser events work.
 
 ### Event Flow
 the path or order in which an event travels through the DOM
@@ -206,7 +210,15 @@ Now, when you click the button the event goes like this:
 ```
 So the event flows down → hits the target → flows up again
 
-### Phases in Event Flow
+
+> Event Flow describes the path an event takes, not how it behaves internally.
+### Event Propagation
+
+Event propagation is the process that defines how an event travels through the DOM —
+from the outermost element (like window or document) down to the target element,
+and then back up again.
+
+#### Phases of Event Propagation
 When you click or trigger an event on an element, the browser sends that event through three phases of flow:
 ```md
 1️⃣ Capturing Phase  →  top → down
@@ -214,21 +226,41 @@ When you click or trigger an event on an element, the browser sends that event t
 3️⃣ Bubbling Phase   →  bottom → up
 ```
 
-#### 1. Capturing Phase (Trickle Down)
+ 1. **Capturing Phase (Trickle Down)**\
 The event starts at the top (`window → document → html → body …`) and travels downward through parent elements until it reaches the element you actually interacted with.
 
-#### 2. Target Phase
+ 2. **Target Phase**\
 When the event reaches the exact element that triggered it (the one you clicked),
 that’s the target phase.
 
-#### 3. Bubbling Phase (Bubble Up)
+3. **Bubbling Phase (Bubble Up)**\
 After the target is reached,
-the event bubbles back up the DOM tree to the root again.
-
+the event bubbles back up the DOM tree to the root again.\
 By default, normal event listeners (`addEventListener('click', handler)`)
 are attached in the bubbling phase.
 
-### Parent Event Triggering During Event Flow
+### Difference between Event Flow and Event Propagation
+Event Flow and Event Propagation describe the same overall concept,
+but are used a bit differently in context.
+
+| Term                  | Meaning                                                                                                                 | Usage Context                                                             |
+| --------------------- | ----------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| **Event Flow**        | Describes the **order or path** an event takes through the DOM (from top → target → bottom → back up).                  | Conceptual — used when explaining *how* the event moves.                  |
+| **Event Propagation** | Describes the **mechanism/process** by which an event travels through different phases (capturing → target → bubbling). | Technical — used when explaining *how browsers handle* events internally. |
+
+In Simple Words:
+
+- Event flow → focuses on the direction of travel (down → up).
+- Event propagation → focuses on the phases and mechanics of that travel.
+
+> In short: Flow = route, Propagation = process.
+
+[Go To Top](#content)
+
+---
+
+
+# Event Bubbling and Event Capturing
 When an event occurs on a child element, the same event continues to propagate upward, triggering parent event handlers of the same type if they exist.
 
 **Example:**
@@ -284,7 +316,7 @@ parent1
 > this event get trigger in bubbling phase because by default normal event listeners (`addEventListener('click', handler)`)
 are attached in the bubbling phase.
 
-you can manually set them up for Capturing Phase
+you can manually set them up for Capturing Phase by setting third parameter as true (by default it is set to false)
 
 ```html
 <div class="parent1">
@@ -316,3 +348,222 @@ child
 [Go To Top](#content)
 
 ---
+# Event Delegation
+Event Delegation is a technique where you attach one event listener to a parent element instead of multiple listeners to individual child elements.
+
+The parent handles events for all its children using [event bubbling](#event-bubbling-and-event-capturing).
+
+### Example
+```html
+<ul id="list">
+  <li>Apple</li>
+  <li>Mango</li>
+  <li>Banana</li>
+</ul>
+
+<script>
+  const list = document.getElementById('list');
+
+  list.addEventListener('click', (event) => {
+    if (event.target.tagName === 'LI') {
+      console.log(`You clicked: ${event.target.textContent}`);
+    }
+  });
+</script>
+```
+Output (when clicking on an item):
+```
+You clicked: Mango
+```
+
+### Why It’s Useful
+- You don’t need to attach separate event listeners to every `<li>`.
+- It works even if new `<li>` elements are added dynamically later.
+- It saves memory and improves performance.
+
+[Go To Top](#content)
+
+---
+# Custom Events
+Custom events are user-defined events — events that you create and trigger manually to communicate between parts of your code or components.
+
+They work just like built-in events (click, input, etc.), but you define the event name and data.
+
+### Why Use Custom Events?
+Because sometimes you want elements or modules to react to specific actions that aren’t built into the browser.
+
+Example:
+- A “cart updated” event when an item is added to a shopping cart.
+- A “theme changed” event when a user toggles dark mode.
+- A “data loaded” event after fetching data from API.
+
+### Creating and Dispatching a Custom Event
+You can create one using the `CustomEvent` constructor.
+
+```html
+<button id="btn">Add to Cart</button>
+<script>
+  const btn = document.getElementById('btn');
+
+  // 1️⃣ Listen for custom event
+  document.addEventListener('cartUpdate', (e) => {
+    console.log('🛒 Cart updated:', e.detail);
+  });
+
+  // 2️⃣ Create & dispatch event when button is clicked
+  btn.addEventListener('click', () => {
+    const event = new CustomEvent('cartUpdate', {
+      detail: { item: 'Laptop', quantity: 1 } // you can send data
+    });
+    document.dispatchEvent(event);
+  });
+</script>
+```
+Output (in console):
+```
+🛒 Cart updated: { item: "Laptop", quantity: 1 }
+```
+### How it work
+1. **Set Up a Listener for Custom Event**
+```js
+document.addEventListener('cartUpdate', (e) => {
+  console.log('🛒 Cart updated:', e.detail);
+});
+```
+- You’re telling the `document` to listen for an event called `cartUpdate`.
+- Whenever that event is triggered, this callback runs.
+- The `e.detail` property contains extra information (data) that you send with the event.
+
+2. **When Button Is Clicked — Create Custom Event**
+```js
+btn.addEventListener('click', () => {
+  const event = new CustomEvent('cartUpdate', {
+    detail: { item: 'Laptop', quantity: 1 }
+  });
+  document.dispatchEvent(event);
+});
+```
+- When the button is clicked:
+    - A new CustomEvent object is created with the name `'cartUpdate'`.
+    - Inside `detail`, you add any custom data (in this case, `{ item: 'Laptop', quantity: 1 }`).
+- Then you dispatch (trigger) that event on the document:
+    ```js
+    document.dispatchEvent(event);
+    ```
+
+### Example with DOM Elements
+You can dispatch custom events from any DOM element — not just `document`.
+```html
+<div id="card"></div>
+<script>
+  const card = document.getElementById('card');
+
+  // Listener
+  card.addEventListener('expand', () => {
+    console.log('Card expanded!');
+  });
+
+  // Trigger event manually
+  card.dispatchEvent(new Event('expand'));
+</script>
+```
+### Summary
+| Step                               | Description                 |
+| ---------------------------------- | --------------------------- |
+| `new CustomEvent(name, options)`   | Create a custom event       |
+| `.dispatchEvent(event)`            | Trigger it manually         |
+| `.addEventListener(name, handler)` | Listen for it               |
+| `event.detail`                     | Extra data you passed along |
+
+
+> Custom Events = Best for modular, independent, and reusable code.
+>
+>Not needed for small scripts or tightly connected logic.
+
+[Go To Top](#content)
+
+---
+# Once, Passive, and Signal options
+Besides `true` or `false` for capture/bubble phase,
+you can pass an object with extra options:
+
+```js
+element.addEventListener("click", handler, {
+  once: true,
+  passive: true,
+  signal: controller.signal
+});
+```
+
+### `once: true`
+**Meaning:**\
+The event listener will run only once, then automatically remove itself.
+
+**Example:**
+```js
+button.addEventListener('click', () => {
+  console.log('Button clicked!');
+}, { once: true });
+```
+After the first click, the listener is gone automatically.
+
+**Use when**:\
+You only need a handler once (like showing a message or starting an animation).
+
+### `passive: true`
+**Meaning:**\
+Tells the browser this event listener will never call `preventDefault()`. So, the browser can optimize performance, especially for scroll or touch events
+
+**Example:**
+```js
+window.addEventListener('scroll', (e) => {
+  console.log('Scrolling...');
+}, { passive: true });
+```
+- The browser can scroll smoothly
+- If you try e.preventDefault() inside, it will be ignored.
+
+**Use when:**
+- You just want to read scroll/touch events
+- You don’t need to block browser’s default behavior (like scrolling).
+
+### `signal: controller.signal`
+**Meaning:**\
+This lets you abort (cancel) an event listener programmatically using the AbortController API.
+
+**Example:**
+```js
+const controller = new AbortController();
+
+window.addEventListener('click', () => {
+  console.log('Click detected!');
+}, { signal: controller.signal });
+
+// Later...
+controller.abort(); // ❌ removes the listener
+```
+After `controller.abort()`, the listener is removed automatically.
+
+**Use when:**\
+You want to remove listeners dynamically or clean up automatically (for example, when a component unmounts or a request is canceled).
+
+
+### Summary Table
+| Option    | Purpose                                              | Example                         | When to Use                       |
+| --------- | ---------------------------------------------------- | ------------------------------- | --------------------------------- |
+| `once`    | Runs only one time                                   | `{ once: true }`                | For one-time setup actions        |
+| `passive` | Improves performance by not blocking browser default | `{ passive: true }`             | For scroll, touch, wheel events   |
+| `signal`  | Allows programmatic removal with `AbortController`   | `{ signal: controller.signal }` | For cleanup or dynamic unmounting |
+
+### In short:
+
+`once` → auto-remove after first run\
+`passive` → faster scroll/touch (no preventDefault)\
+`signal` → controlled removal via AbortController
+
+[Go To Top](#content)
+
+---
+
+
+
