@@ -539,6 +539,59 @@ var sayBye = function() {
 - Here `sayBye` is hoisted as `undefined` (because `var`),
 - calling it before assignment gives error.
 
+### Sequence of hoisting
+When JS loads your script, it scans the entire scope before execution and performs hoisting in two phases:
+1. Function declarations are hoisted first (with their body).
+2. Variable declarations (var) are hoisted next — but only the declaration, not the assignment.
+
+
+#### Example 1:
+```js
+var fun = 2
+function fun(){
+    console.log("hello")
+}
+
+fun()   // error -> fun is not a function
+```
+your code is internally rearranged by JS like this
+```js
+function fun() {
+  console.log("hello");
+}
+
+var fun; // this just redeclares 'fun', does nothing yet
+
+fun = 2; // assignment happens here (overwrites the function)
+
+fun(); // ❌ now fun is 2, not a function
+```
+
+#### Example 2:
+```js
+let fun = 2
+function fun(){
+    console.log("hello")
+}
+
+fun()   // error -> Identifier 'fun' has already been declared
+```
+When the JS engine parses your code:
+1. It hoists the function declaration `fun()` — marks a function named `fun` in the current scope.
+```js
+function fun() {
+  console.log("hello");
+}
+```
+2. Then, it sees `let fun = 2;` — tries to declare a new identifier `fun` in the same scope.
+```js
+function fun() {
+  console.log("hello");
+}
+
+let fun;    // But fun is already declared by the function declaration
+```
+So JS throws a syntax error at compile time before running anything:
 
 
 [Go To Top](#content)
