@@ -2,11 +2,12 @@
 1. [Execution Context (EC)](#execution-context-ec)
 2. [Scope and Scope Chaining](#scope-and-scope-chaining)
 3. [Lexical Environment](#lexical-environment)
-4. [Hoisting ](#hoisting)
-5. [Temporal Dead Zone (TDZ)](#temporal-dead-zone-tdz)
-6. [Closure](#closure)
-7. [Call Stack](#call-stack)
-8. [Memory Management, Garbage Collection & Memory Leaks](#memory-management-garbage-collection--memory-leaks)
+4. [Lexical Scope](#lexical-scope)
+5. [Hoisting ](#hoisting)
+6. [Temporal Dead Zone (TDZ)](#temporal-dead-zone-tdz)
+7. [Closure](#closure)
+8. [Call Stack](#call-stack)
+9. [Memory Management, Garbage Collection & Memory Leaks](#memory-management-garbage-collection--memory-leaks)
 
 ---
 # Execution Context (EC)
@@ -153,13 +154,18 @@ outer();
 ---
 
 # Lexical Environment
-- A Lexical Environment is a structure that holds:
+- A Lexical Environment is a data structure that holds:
     1. **Variable Environment** → all variables & functions declared in the current scope.
     2. **Reference to outer (parent) environment**→ so it can use scope chain.
 - “Lexical” means based on where the code is written (not where it is called).
-- Every Lexical Environment stores its own variables/functions.
-- PLUS → it keeps a link (reference/pointer) to the parent environment where it was defined.
+- A Lexical Environment is what the JavaScript engine creates in memory when your code runs.
+- It has:
+    - Environment Record → stores variables/functions
+    - Outer Reference → a link to its parent’s environment
+    
+    
 
+> It exist at runtime (when code executes)
 
 ### Example 1 (Basic)
 ```js
@@ -186,6 +192,12 @@ How Lexical Environment is built:
 When `inner()` tries to access `a`, it goes:\
 inner → outer → global (scope chain).
 
+```
+GlobalEnv → { outer: f }
+OuterEnv → { a: 10, inner: f, outerRef → GlobalEnv }
+InnerEnv → { b:20, outerRef → OuterEnv }
+```
+
 ### Example 2 (Closure)
 ```js
 function makeCounter() {
@@ -206,7 +218,245 @@ console.log(counter1()); // 2
 - Even though `makeCounter()` finished, the lexical environment stays alive because of closure.
 
 ### In short:
-**Lexical Environment = variables defined in the current scope + reference to the parent scope (where it was written, not where called).**
+**Lexical Environment = A data structure that holds variables defined in the current scope + reference to the parent scope (where it was written, not where called).**
+
+[Go To Top](#content)
+
+---
+# Lexical Scope
+Lexical scope means that a variable’s scope (where it can be accessed) is determined by where it is written in the source code, not where it is called from.
+
+Lexical Scope is the rule that defines which variables a function can access, based on where that function is written in your code.
+
+> Lexical scope is like a family tree of code — each child (function/block) can look up to its ancestors for variables, but never sideways or downward.
+
+### List of Rules 
+
+#### Rule 1️⃣ — Scope is decided at write-time (not runtime)
+When you define a function, its scope chain is already fixed —
+it knows which outer variables it can access.
+```js
+let a = 10;
+
+function outer() {
+  let b = 20;
+
+  function inner() {
+    console.log(a, b);
+  }
+
+  inner();
+}
+outer();
+```
+`inner()` can access both a and b\
+Because JS already decided (when you wrote it) that inner lives inside outer.
+>The scope chain is built when the function is defined, not when it’s called.
+
+#### Rule 2️⃣ — Functions can access variables from their outer (parent) scopes
+A function can always see variables in:
+- Its own scope 
+- Any scope lexically above it 
+
+But not in:
+- Sibling or child scopes
+
+```js
+function parent() {
+  let x = 5;
+
+  function child() {
+    console.log(x); // ✅ accessible
+  }
+
+  child();
+  console.log(y); // ❌ not accessible
+  function grandchild() {
+    let y = 10;
+  }
+}
+```
+
+#### Rule 3️⃣ — Each new block or function creates a new scope
+Every time you use `{}` (block) or define a function,
+a new lexical environment is created.
+```js
+{
+  let x = 1; // block scope
+  {
+    let y = 2; // nested block
+    console.log(x, y); // ✅ both accessible
+  }
+  console.log(y); // ❌ y not visible here
+}
+```
+> Scopes are nested, not shared horizontally.
+
+#### Rule 4️⃣ — Inner scopes can shadow outer variables
+If a variable in an inner scope has the same name as one in an outer scope,
+the inner one “shadows” (hides) the outer one.
+```js
+let x = 10;
+
+function test() {
+  let x = 20;
+  console.log(x); // 20 — inner variable hides global one
+}
+test();
+```
+> Lexical scope always checks from inner to outer (nearest first).
+ 
+#### Rule 5️⃣ — No backward or sideways access
+Functions cannot access variables from:
+- Other sibling scopes 
+- Scopes created later 
+```js
+function one() {
+  let a = 10;
+}
+
+function two() {
+  console.log(a); // ❌ can't access — not in my lexical chain
+}
+```
+
+
+
+### JavaScript is lexically scoped
+Accessibility of variables is determined by the physical structure of the code — i.e., where functions and blocks are written — not by where they’re called at runtime.
+
+#### Example 1
+```js
+let name = "Global";
+
+function outer() {
+  let name = "Outer";
+
+  function inner() {
+    console.log(name);
+  }
+
+  inner();
+}
+outer();
+```
+**Output:**
+```
+Outer
+```
+**Because:**
+- `inner()` was written inside `outer()` — that’s its lexical environment.
+- So when `inner()` runs, it looks upward in the written code — not in where it’s called from.
+- Hence, it finds `name = "Outer"`.
+
+#### Example 2
+```js
+let name = "Global";
+
+function inner() {
+  console.log(name);
+}
+
+function outer() {
+  let name = "Outer";
+  inner(); // called inside outer
+}
+
+outer();
+```
+If JS were dynamic, `inner()` would print `"Outer"` because it’s called inside `outer()`.\
+But since JS is lexical, it prints `"Global"` — because it was defined in the global scope.
+
+**Output**
+
+```
+Global
+```
+
+#### In Short JS is lexically scoped because:
+- Functions remember the environment (variables) where they were defined,
+not where they are called.
+- The scope chain is built when code is written (parsed), not when it runs.
+
+
+### Lexical Environment Vs Lexical Scope  
+
+#### Lexical Scope — the rulebook
+Lexical scope means the set of rules that decide which variables are visible to a piece of code based on where it’s written.
+
+It’s a concept, not a physical thing in memory.
+
+**Example**
+```js
+function outer() {
+  let a = 10;
+
+  function inner() {
+    console.log(a);
+  }
+
+  inner();
+}
+```
+Here,\
+`inner()` can access `a` because of the lexical scope rule — it’s written inside `outer()`.
+
+> Lexical scope = the rule that defines variable visibility by code position.
+
+#### Lexical Environment — the real data structure
+A Lexical Environment is what the JavaScript engine creates in memory when your code runs
+
+It’s a map of variable names → values that follows the lexical scope rules.
+
+It has:
+- Environment Record → stores variables/functions
+- Outer Reference → a link to its parent’s environment
+
+**Example (runtime concept):**
+```css
+GlobalEnv → { outer: f }
+OuterEnv → { a: 10, inner: f, outerRef → GlobalEnv }
+InnerEnv → { outerRef → OuterEnv }
+```
+So the engine builds these lexical environments following the lexical scope rules.
+
+#### In Short
+| Concept                 | What it is                                          | When it exists                    | Example analogy    |
+| ----------------------- | --------------------------------------------------- | --------------------------------- | ------------------ |
+| **Lexical Scope**       | The *rules* that define which variables are visible | At code definition (compile time) | Blueprint 🧱       |
+| **Lexical Environment** | The *actual object* storing variables & values      | At runtime (when code executes)   | The built house 🏠 |
+
+
+### lexical scope vs Other scope (global, function, block).
+lexical scope is about how scopes are formed and connected, while global/function/block scopes are the actual kinds of scopes that exist.
+
+#### Lexical scope means:
+
+- JavaScript decides which variables are accessible to a function based on where that function is written in the code, not where it’s called.
+- So lexical scope is the rule that determines how global, function, and block scopes are nested and linked.
+
+### Why it’s called “Lexical Scope” even though it’s a set of rules
+Lexical scope is a set of rules, not a tangible thing like a variable or object.\
+But those rules define and create “scopes.”
+
+> it’s called “scope” because it determines the scope boundaries of variables in your code.
+
+### “Lexical” means defined by the written structure (not runtime)
+- The word lexical comes from “lexicon,” which means the vocabulary or structure of written language.
+- So in programming, “lexical” means:\
+something that depends on how the code is written (the text / source) — not how it runs.
+- They use “lexical” because JavaScript decides scope by reading the written code — its lexical (textual) position — not by watching how the code executes.
+
+### “Scope” means area of visibility
+- In programming, scope literally means:\
+Where a variable or function can be seen or accessed.
+
+### Combine both ideas:
+Lexical scope =
+The visibility area (scope) of variables, decided by where you wrote them (lexical position) in your code.
+
+
+
 
 [Go To Top](#content)
 
