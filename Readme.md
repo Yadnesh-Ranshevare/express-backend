@@ -30,6 +30,7 @@
 3. [Event Loop](./basics/JavaScriptConcept/EventLoop/readme.md)
 4. [JS Objects](./basics/JavaScriptConcept/Objects/readme.md)
 5. [JS Event](./basics/JavaScriptConcept/Event/readme.md)
+6. [child_process](./basics/JavaScriptConcept/child_process/readme.md)
     
 # Miscellaneous Topic
 1. [Md to Txt File conversion](./basics/Md-to-Txt/index.js)
