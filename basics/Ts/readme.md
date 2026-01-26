@@ -2,6 +2,8 @@
 1. [Introduction](#introduction)
 2. [Typescript project setup](#typescript-project-setup)
 3. [Basic Syntax](#basic-syntax)
+4. [Types](#types)
+5. [Generics](#generics)
 
 ---
 # Introduction
@@ -379,6 +381,291 @@ const b:admin = {
 }
 ```
 
+
+
+[Go To Top](#content)
+
+---
+# Types
+At a high level, TypeScript has three fundamental mechanisms for assigning / fixing types.
+
+### 1. Type Annotation
+```js
+let a: number = 10;
+```
+You declare the type explicitly\
+TS checks assignments against it
+
+Used in:
+- variables
+- function params
+- return types
+- object properties
+### 2. Type Assertion (`as`)
+```js
+let b = value as number;
+```
+You tell TS to trust you\
+No checking, no validation
+
+Used when:
+- DOM elements
+- external APIs
+- third-party libraries
+- narrowing unions manually
+
+### 3. Generics
+```js
+function identity<T>(value: T): T {
+  return value;
+}
+
+const num = identity<number>(10);
+```
+Type is parameterized\
+Decided later (at usage time)
+
+Used when:
+- writing reusable functions
+- reusable components
+- collections
+- libraries
+### commonly used types
+| **Type**       | **Description**        | **Example**                                     |
+| -------------- | ---------------------- | ----------------------------------------------- |
+| `string`       | Text values            | `let name: string = "Yadnesh";`                 |
+| `number`       | Numbers (int, float)   | `let age: number = 21;`                         |
+| `boolean`      | True / False           | `let isAdmin: boolean = false;`                 |
+| `array`        | List of values         | `let skills: string[] = ["JS", "TS"];`          |
+| `tuple`        | Fixed-size array       | `let user: [string, number] = ["Yadnesh", 21];` |
+| `any`          | No type safety         | `let data: any = "hello";`                      |
+| `unknown`      | Safer than `any`       | `let res: unknown;`                             |
+| `object`       | Structured data        | `let user: { name: string; age: number };`      |
+| `type`         | Custom type alias      | `type User = { id: number; name: string };`     |
+| `interface`    | Object structure       | `interface User { id: number; name: string }`   |
+| `union` (`\|`) | Multiple allowed types | `let id: number \| string;`                     |
+| `literal`      | Fixed values           | `let status: "loading" \| "success";`           |
+| `function`     | Function typing        | `function add(a: number, b: number): number {}` |
+| `optional (?)` | Optional property      | `age?: number`                                  |
+| `enum`         | Named constants        | `enum Role { ADMIN, USER }`                     |
+| `void`         | No return              | `function log(): void {}`                       |
+| `never`        | Never returns          | `function err(): never { throw Error(); }`      |
+| `null`         | Null value             | `let value: string \| null = null;`             |
+| `undefined`    | Undefined value        | `let data: number \| undefined;`                |
+| `Record`       | Key-value object       | `Record<string, number>`                        |
+| `readonly`     | Immutable property     | `readonly id: number`                           |
+
+### DOM Element Types
+| **DOM Type**          | **Used For**                    | **Example**                                                             |
+| --------------------- | ------------------------------- | ----------------------------------------------------------------------- |
+| `HTMLElement`         | Base type for all HTML elements | `const el: HTMLElement = document.body;`                                |
+| `HTMLDivElement`      | `<div>`                         | `const div = document.querySelector("div") as HTMLDivElement;`          |
+| `HTMLSpanElement`     | `<span>`                        | `const span = document.querySelector("span") as HTMLSpanElement;`       |
+| `HTMLButtonElement`   | `<button>`                      | `const btn = document.querySelector("button") as HTMLButtonElement;`    |
+| `HTMLInputElement`    | `<input>`                       | `const input = document.querySelector("input") as HTMLInputElement;`    |
+| `HTMLFormElement`     | `<form>`                        | `const form = document.querySelector("form") as HTMLFormElement;`       |
+| `HTMLImageElement`    | `<img>`                         | `const img = document.querySelector("img") as HTMLImageElement;`        |
+| `HTMLAnchorElement`   | `<a>`                           | `const link = document.querySelector("a") as HTMLAnchorElement;`        |
+| `HTMLSelectElement`   | `<select>`                      | `const select = document.querySelector("select") as HTMLSelectElement;` |
+| `HTMLTextAreaElement` | `<textarea>`                    | `const ta = document.querySelector("textarea") as HTMLTextAreaElement;` |
+| `HTMLUListElement`    | `<ul>`                          | `const ul = document.querySelector("ul") as HTMLUListElement;`          |
+| `HTMLLIElement`       | `<li>`                          | `const li = document.querySelector("li") as HTMLLIElement;`             |
+| `HTMLTableElement`    | `<table>`                       | `const table = document.querySelector("table") as HTMLTableElement;`    |
+| `HTMLVideoElement`    | `<video>`                       | `const video = document.querySelector("video") as HTMLVideoElement;`    |
+| `HTMLAudioElement`    | `<audio>`                       | `const audio = document.querySelector("audio") as HTMLAudioElement;`    |
+| `HTMLCanvasElement`   | `<canvas>`                      | `const canvas = document.querySelector("canvas") as HTMLCanvasElement;` |
+
+### Event Types 
+| **Event Type**  | **Triggered By** | **Example**          |
+| --------------- | ---------------- | -------------------- |
+| `Event`         | Base event       | `(e: Event)`         |
+| `MouseEvent`    | Click, hover     | `(e: MouseEvent)`    |
+| `KeyboardEvent` | Key press        | `(e: KeyboardEvent)` |
+| `InputEvent`    | Input change     | `(e: InputEvent)`    |
+| `FocusEvent`    | Focus / blur     | `(e: FocusEvent)`    |
+| `SubmitEvent`   | Form submit      | `(e: SubmitEvent)`   |
+
+
+[Go To Top](#content)
+
+---
+# Generics
+Generics let you write reusable, type-safe code where the type is decided later, not when you write the function/class.
+
+```js
+function test<T>(arg: T): T[] {
+    return [arg];
+}
+
+const res1 = test<string>("yadnesh");
+console.log(res1); // [ 'yadnesh' ]
+
+const res2 = test<number>(1);
+console.log(res2); // [ 1 ]
+```
+Generic with Interface
+```js
+interface type<T> {
+    type: T;
+}
+
+const res3: type<string> = {
+    type: "string",
+};
+console.log(res3); // { type: 'string' }
+```
+Generic with Type Alias
+```js
+type type<T> = {
+    type: T;
+};
+
+const res4: type<string> = {
+    type: "string",
+};
+console.log(res4); // { type: 'string' }
+```
+
+### Extend 
+Extend keyword let you inherit other interface
+```js
+interface user {
+    name:string
+    age:number
+}
+
+interface admin extends user {
+    role:string
+}
+
+const b:admin = {
+    name:"Yadnesh",
+    role:"admin",
+    age:21
+}
+```
+with generics
+```js
+interface type3<T extends string> { // T must be a string
+    age: number;
+    name: T
+}
+
+const res5: type3<"yadnesh"> = {
+    age: 1,
+    name: "yadnesh"
+}
+
+// res5.name = "abc" // error -> Type '"abc"' is not assignable to type '"yadnesh"'.
+
+const res12: type3<string> = {
+    age: 1,
+    name: "yadnesh"
+} 
+res12.name = "abc"  // no error
+```
+similarly
+```js
+type test2 = {
+    name: string
+}
+
+type type6<T extends test2> = {
+    name: T
+    age: number
+}
+
+const res10: type6<{ name: "yadnesh" }> = {
+    name: { name: "yadnesh" },
+    age: 1
+}
+
+// res10.name.name = "abc"     // error -> Type '"abc"' is not assignable to type '"yadnesh"'.
+
+const res11: type6<{ name: string }> = {
+    name: { name: "yadnesh" },
+    age: 1
+}
+res11.name.name = "abc" // no error
+```
+### Dynamic content inside type using Extend 
+```js
+type type4<T> = T extends string ? { name: string } : { number: number };
+
+const res6: type4<number> = {
+    number: 1,
+};
+
+const res7: type4<string> = {
+    name: "yadnesh",
+};
+
+console.log(res5); // { number: 1 }
+console.log(res6); // { name: 'yadnesh' }
+```
+Or
+```js
+type type5<T> = {
+    prop: T extends string ? string : number;
+};
+
+const res8: type5<string> = {
+    prop: "string",
+};
+
+const res9: type5<number> = {
+    prop: 1,
+};
+
+console.log(res8); // { prop: 'string' }
+console.log(res9); // { prop: 1 }
+```
+
+### Infer
+infer means “catch the inner type and name it.”
+```js
+type test3<U> = {
+    prop: U
+}
+
+type type7<T> = T extends test3<infer U> ? U : string; 
+
+const res13: type7<test3<string>> = "yadnesh";
+const res14: type7<number> = "abc"
+```
+we can simplify above code as 
+```js
+type test3 = number
+
+type type7<T> = T extends test3 ? test3 : string
+```
+type `T` extends type `test3`
+
+But as our `test3` type also accept generic(`U`), we cn get the generic by using `infer`
+
+```js
+type test3<U> = {
+    prop: U
+}
+
+type type7<T> = T extends test3<infer U> ? U : string; 
+```
+this code says that if `type7` extend `test3<U>` then type of `type7` will be `U` else it will be string
+``` js
+const res13: type7<test3<string>> = "yadnesh";  
+```
+Here `type7` is extending `test<string>` with `U = string`. Therefor final type will be `U` i.e string
+```js
+const res14: type7<number> = "abc";
+```
+Here `type7` is not extending `test<U>` therefor, as per the condition final type will be string
+
+Similarly
+```js
+const res15: type7<{ prop: 1 }> = 1;
+// const res16: type7<{ prop: 1 }> = 2;    // error -> Type '2' is not assignable to type '1'.
+```
+as `{ prop: 1 }` follows the `test3<U>` with `U = 1`
 
 
 [Go To Top](#content)
