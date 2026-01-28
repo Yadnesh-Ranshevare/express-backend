@@ -94,5 +94,33 @@ type type7<T> = T extends test3<infer U> ? U : string;
 
 const res13: type7<test3<string>> = "yadnesh";
 const res14: type7<number> = "abc";
-const res15: type7<{ prop: 1 }> = 1; 
+const res15: type7<{ prop: 1 }> = 1;
 // const res16: type7<{ prop: 1 }> = 2;    // error -> Type '2' is not assignable to type '1'.
+
+type test4<U> = {
+    prop: U;
+};
+type type8<T> = T extends test4<infer U> ? test4<U> : T;
+
+const res17: type8<test4<string>> = { prop: "yadnesh" };
+const res18: type8<number> = 1;
+const res19: type8<{ prop: 1 }> = { prop: 1 };
+// console.log(res17, res18, res19);   // { prop: 'yadnesh' } 1 { prop: 1 }
+
+type type9<T> = {
+    [K in keyof T]: T[K] extends null ? string : T[K];
+};
+
+const res20: type9<{ price: null; name: null }> = {
+    price: "100",
+    name: "kit kat",
+};
+
+const res21: type9<{ price: number; isValid: boolean }> = {
+    price: 125,
+    isValid: true,
+};
+
+// console.log(res20, res21);  // { price: '100', name: 'kit kat' } { price: 125, isValid: true }
+
+

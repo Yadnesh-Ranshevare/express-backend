@@ -3,7 +3,7 @@
 2. [Typescript project setup](#typescript-project-setup)
 3. [Basic Syntax](#basic-syntax)
 4. [Types](#types)
-5. [Generics](#generics)
+5. [Generics, Extend, Infer & Looping](#generics)
 
 ---
 # Introduction
@@ -236,7 +236,7 @@ Therefor TypeScript (TS) is commonly described as an optionally statically typed
       "start":"Node src/index.js"
     }
     ```
-    Or you can reduce this `"compile"` + `"stat"` command into single 
+    Or you can combine this `"compile"` + `"stat"` command into single line
     ```json
     "scripts": {
       "start":"tsc src/index.ts && Node src/index.js"
@@ -287,7 +287,7 @@ Now to run our compiled `.js` file
 ```
 Therefor
 1. run `npm run watch` command for auto-compilation
-2. run `npm start` to execute freshly compiled `.ts` file
+2. run `npm start` to execute freshly compiled `.js` file
 
 [Go To Top](#content)
 
@@ -315,6 +315,13 @@ function greet(name: string): string {
 }
 
 const add = (a: number, b: number): number => a + b;
+```
+### Objects
+```ts
+const obj: { [key in string]: string } = {
+    name: "yadnesh",
+    address: "kalyan",
+};
 ```
 ### Interfaces
 ```ts
@@ -641,7 +648,7 @@ type type7<T> = T extends test3 ? test3 : string
 ```
 type `T` extends type `test3`
 
-But as our `test3` type also accept generic(`U`), we cn get the generic by using `infer`
+But as our `test3` type also accept generic(`U`), we can get the by using `infer`
 
 ```js
 type test3<U> = {
@@ -654,7 +661,7 @@ this code says that if `type7` extend `test3<U>` then type of `type7` will be `U
 ``` js
 const res13: type7<test3<string>> = "yadnesh";  
 ```
-Here `type7` is extending `test<string>` with `U = string`. Therefor final type will be `U` i.e string
+Here `type7` is extending `test<string>` with `U = string`. Therefor final type will be `U` i.e `string`
 ```js
 const res14: type7<number> = "abc";
 ```
@@ -666,6 +673,51 @@ const res15: type7<{ prop: 1 }> = 1;
 // const res16: type7<{ prop: 1 }> = 2;    // error -> Type '2' is not assignable to type '1'.
 ```
 as `{ prop: 1 }` follows the `test3<U>` with `U = 1`
+
+### Example
+```js
+type test4<U> = {
+    prop: U;
+};
+
+type type8<T> = T extends test4<infer U> ? test4<U> : T;
+
+const res17: type8<test4<string>> = { prop: "yadnesh" };
+const res18: type8<number> = 1;
+const res19: type8<{ prop: 1 }> = { prop: 1 };  
+
+console.log(res17, res18, res19);   // { prop: 'yadnesh' } 1 { prop: 1 }
+```
+
+### Looping over type
+```js
+type type9<T> = {
+    [K in keyof T]: T[K] extends null ? string : T[K];
+}
+
+const res20: type9<{ price: null, name: null }> = {
+    price: "100",
+    name: "kit kat"
+}
+
+const res21: type9<{ price: number, isValid: boolean }> = {
+    price: 125,
+    isValid: true
+}
+```
+In above code snippet `[K in keyof T]` is a loop that traverse over the type object that pass as generic `T`, where `K` is key and `T` is entire type object
+
+let say our type object is
+```js
+{ 
+    price: number, 
+    name: string 
+}
+```
+here `K` will be:
+- for first iteration: `k = price` -> `T[K]` is type of `price` i.e, `number`
+- for second iteration: `k = name` -> `T[K]` is type of `name` i.e, `string`
+
 
 
 [Go To Top](#content)
