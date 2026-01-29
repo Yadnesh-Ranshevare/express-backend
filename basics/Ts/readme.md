@@ -8,6 +8,8 @@
 
 ---
 # Introduction
+> Prerequisites: User must know javascript (specially syntax, operators and Data Types)
+
 TypeScript is a programming language built on top of JavaScript that adds types to your code.
 
 It can also be consider as superset of JavaScript
