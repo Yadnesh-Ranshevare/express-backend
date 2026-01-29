@@ -123,4 +123,14 @@ const res21: type9<{ price: number; isValid: boolean }> = {
 
 // console.log(res20, res21);  // { price: '100', name: 'kit kat' } { price: 125, isValid: true }
 
+type test5<U> = {
+    props: U;
+};
 
+type type10<T> = T extends test5<infer U> ? (U extends number ? number : T) : T;
+
+const res22: type10<test5<number>> = 1;
+const res23: type10<test5<string>> = { props: 'yadnesh' };
+const res24: type10<Boolean> = true;
+
+// console.log(res22, res23, res24);   // 1 { props: 'yadnesh' } true

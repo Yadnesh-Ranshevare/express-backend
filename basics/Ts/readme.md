@@ -663,9 +663,9 @@ type test3 = number
 
 type type7<T> = T extends test3 ? test3 : string
 ```
-type `T` extends type `test3`
+we are just checking whether or not type `T` (generic) extends type `test3`, if it does then our final type becomes `type3` i.e, `number` else it become `string`
 
-But as our `test3` type also accept generic(`U`), we can get the by using `infer`
+But as our `test3` type also accept generic(`U`), we can get this `U`  by using `infer`
 
 ```js
 type test3<U> = {
@@ -691,7 +691,7 @@ const res15: type7<{ prop: 1 }> = 1;
 ```
 as `{ prop: 1 }` follows the `test3<U>` with `U = 1`
 
-### Example
+### Example 1: basic 
 ```js
 type test4<U> = {
     prop: U;
@@ -705,7 +705,20 @@ const res19: type8<{ prop: 1 }> = { prop: 1 };
 
 console.log(res17, res18, res19);   // { prop: 'yadnesh' } 1 { prop: 1 }
 ```
+### Example 2: Nested infer with extend
+```ts
+type test5<U> = {
+    props: U;
+};
 
+type type10<T> = T extends test5<infer U> ? (U extends number ? number : T) : T;
+
+const res22: type10<test5<number>> = 1;
+const res23: type10<test5<string>> = { props: 'yadnesh' };
+const res24: type10<Boolean> = true;
+
+console.log(res22, res23, res24);   // 1 { props: 'yadnesh' } true
+``` 
 ### Looping over type
 ```js
 type type9<T> = {
