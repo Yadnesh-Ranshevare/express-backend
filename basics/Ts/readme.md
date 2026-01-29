@@ -4,6 +4,7 @@
 3. [Basic Syntax](#basic-syntax)
 4. [Types](#types)
 5. [Generics, Extend, Infer & Looping](#generics)
+6. [Utilities](#utilities)
 
 ---
 # Introduction
@@ -437,6 +438,20 @@ Used when:
 - reusable components
 - collections
 - libraries
+
+### Union
+In TypeScript, a union type lets a variable (or parameter, or return value) hold one of several possible types instead of just one.
+
+You create a union using the pipe (`|`) symbol.
+
+example
+```ts
+let id: number | string;
+
+id = 101;       // ✅ allowed
+id = "A101";    // ✅ allowed
+id = true;      // ❌ error
+```
 ### commonly used types
 | **Type**       | **Description**        | **Example**                                     |
 | -------------- | ---------------------- | ----------------------------------------------- |
@@ -717,6 +732,197 @@ let say our type object is
 here `K` will be:
 - for first iteration: `k = price` -> `T[K]` is type of `price` i.e, `number`
 - for second iteration: `k = name` -> `T[K]` is type of `name` i.e, `string`
+
+
+
+[Go To Top](#content)
+
+---
+# Utilities
+
+In TypeScript, utilities (utility types) are built-in generic types that help you transform, reuse, or derive new types from existing ones—without rewriting code.
+
+### Common TypeScript Utility Types
+There are mainly 4 type of utility in ts i.e, 
+| Type | What utilities do            |
+| -------- | ---------------------------- |
+| Object   | Add/remove/change properties |
+| Union    | Filter types                 |
+| Function | Extract types                |
+| Async    | Unwrap promises              |
+
+
+
+### 1. Object-based utilities
+- **`Partial<T>`**\
+Make all properties optional
+    ```ts
+    type User1 = { id: number; name: string };
+
+    const User1: Partial<User1> = {     // no error
+        id: 1,
+    };
+    ```
+
+- **`Required<T>`**\
+Make all properties required
+
+    ```ts
+    type User2 = {
+        id?: number;
+        name?: string;
+    };
+
+    // const User2: Required<User2> = {    // error -> Property 'name' is missing in type '{ id: number; }' but required in type 'Required<User2>'.
+    //     id: 1,
+    // };
+
+    const User2: Required<User2> = {
+        id: 1,
+        name: "Yadnesh",
+    };
+    ```
+
+- **`Readonly<T>`**\
+Prevent modification
+    ```ts
+    type User3 = {
+        id: number;
+        name: string;
+    };
+
+    const User3: Readonly<User3> = {
+        id: 1,
+        name: "Yadnesh",
+    };
+
+    // User3.id = 2;   // error -> Cannot assign to 'id' because it is a read-only property.
+    // User3.name = "abc";   // error -> Cannot assign to 'name' because it is a read-only property.
+    ```
+- **`Pick<T, K>`**\
+Pick selected properties
+    ```ts
+    type User4 = {
+        id: number;
+        name: string;
+    };
+
+    // const User4: Pick<User4, "id"> = {
+    //     id: 1,
+    //     name:"yadnesh"      // error -> Object literal may only specify known properties, and 'name' does not exist in type 'Pick<User4, "id">'.
+    // };
+
+    const User4: Pick<User4, "id"> = {
+        id: 1,
+    };
+    ```
+
+- **`Omit<T, K>`**\
+Remove selected properties
+    ```ts
+    type User5 = {
+        id: number;
+        name: string;
+    };
+
+    // const User5: Omit<User5, "name"> = {
+    //     id: 1,
+    //     name: "yadnesh",    // error -> Object literal may only specify known properties, and 'name' does not exist in type 'Omit<User5, "name">'.
+    // };
+
+    const User5: Omit<User5, "name"> = {
+        id: 1,
+    };
+    ```
+
+### 2. Union-based utilities
+- **`Exclude<T, U>`**\
+Remove types from a union
+    ```ts
+    type price = number | string 
+
+    // const exc: Exclude<price, string> = "20"    // error -> Type 'string' is not assignable to type 'number'.
+
+    const exc: Exclude<price, string> = 20    
+    ```
+
+- **`Extract<T, U>`**\
+Keep matching types
+    ```ts
+    type price = number | string
+    s 
+    // const ext: Extract<price, string> = 20  // error -> Type 'number' is not assignable to type 'string'.
+
+    const ext: Extract<price, string> = "20"
+    ```
+- **`NonNullable<T>`**\
+Remove null & undefined
+    ```ts
+    type price = number | string | null
+
+    // const nul: NonNullable<price> = null    // error -> Type 'null' is not assignable to type 'NonNullable<price>'.
+
+    const nul: NonNullable<price> = 20
+    ```
+### 3. Function-based utilities
+- **`ReturnType<T>`**\
+Get function return type
+
+    ```ts
+    function demo():string{
+        return "hello"
+    }
+
+    const ans: ReturnType<typeof demo> = demo()
+    ```
+- **`Parameters<T>`**\
+Get function parameters
+    ```ts
+    function demo(name:string, age:number):string{
+        return `im ${name}, ${age} years old`
+    }
+
+    type args = Parameters<typeof demo> // return the type inside array i.e, [string, number]
+
+    const data:args = ["yadnesh", 20]   // as args = [string, number]
+
+    const res = demo(...data)
+    ```
+### 4. Async utility
+- **`Awaited<T>`**\
+Unwrap Promise
+
+    Without `Awaited<T>`
+    ```ts
+    async function getUser(){
+        await new Promise(resolve => setTimeout(resolve, 2000))
+        return {
+            name: "yadnesh",
+            age: 20
+        }
+    }
+
+    type promise = ReturnType<typeof getUser>   // here type is promise
+
+    const prom: promise = getUser()
+
+    prom.then(data => console.log(data))     // { name: 'yadnesh', age: 20 }
+    ```
+    With `Awaited<T>`
+    ```ts
+    sync function getUser(){
+        await new Promise(resolve => setTimeout(resolve, 2000))
+        return {
+            name: "yadnesh",
+            age: 20
+        }
+    }
+
+    type Data = Awaited<ReturnType<typeof getUser>> // here type is type Data = { name: string; age: number; }
+
+    const user: Data = await getUser()
+    console.log(user)       // { name: 'yadnesh', age: 20 }
+    ```
 
 
 
