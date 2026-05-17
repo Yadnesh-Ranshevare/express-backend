@@ -15,6 +15,7 @@
 1. [Prisma](./basics/prisma/redame.md)
 2. [Web Socket](./basics/webSocket/readme.md)
 3. [Server-Sent Events (SSE)](./basics/ServerSentEvent/Readme.md)
+4. [TypeScript](./basics/Ts/readme.md)
 
 
 # Mastering JS
