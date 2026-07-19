@@ -1,12 +1,14 @@
 import type { Context } from "hono";
-import { decode } from "hono/jwt";
+import { verify } from "hono/jwt";
 
 export const decodeToken = async (c: Context) => {
     const token = c.req.param("token");
 
     if (!token) return c.json({ error: "No token provided" });
 
-    const { header, payload } = await decode(token);
+    const secret_key = "my-secret-key";
 
-    return c.json({ header, payload });
+    const payload = await verify(token, secret_key, "HS256");
+
+    return c.json({ payload });
 };

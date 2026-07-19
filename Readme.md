@@ -16,6 +16,7 @@
 2. [Web Socket](./basics/webSocket/readme.md)
 3. [Server-Sent Events (SSE)](./basics/ServerSentEvent/Readme.md)
 4. [TypeScript](./basics/Ts/readme.md)
+5. [Hono](./basics/Hono/README.md)
 
 
 # Mastering JS
