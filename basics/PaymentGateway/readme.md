@@ -1,6 +1,7 @@
 1. [Introduction](#introduction)
 2. [How payment gateway works](#how-a-payment-gateway-works)
 3. [How to set up strip (Payment gateway)](#how-to-set-up-strip-payment-gateway)
+4. [How to save data into database](#how-to-save-data-into-database)
 
 ---
 
