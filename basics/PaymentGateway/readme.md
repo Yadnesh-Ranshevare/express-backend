@@ -143,7 +143,7 @@ to setup payment gateway in backend we need an api that do following task:
 - accepts the payment info from client
 - call the strip (payment gateway) and create the session
 - return the session url so that user can visit it and do payment
-- handle redirect once payment is successful or canaled
+- handle redirect once payment is successful or canceled
 #### 1. initiate the empty express project
 - create node project
 
@@ -163,7 +163,7 @@ to setup payment gateway in backend we need an api that do following task:
         }
     }
     ```
-- wite a boiler plate code
+- write a boiler plate code
     ```js
     import express from "express";
 
@@ -175,7 +175,7 @@ to setup payment gateway in backend we need an api that do following task:
         console.log("Server is running on port 3000");
     });
     ```
-#### 2. create the api that return the session url fo payment
+#### 2. create the api that return the session url for payment to client
 - initialize the empty checkout api
 
     ```js
@@ -212,7 +212,7 @@ to setup payment gateway in backend we need an api that do following task:
         });
     });
     ```
-> NOTE: strip take 2% commission on your transaction and thats why strip has limit on minimum transaction, so make sure your all transaction is above that limit also this limit depended on your resin and currency. In our example its up to 39 inr i.e, 3900 paise 
+> NOTE: strip take 2% commission on your transaction and thats why strip has limit on minimum transaction, so make sure your all transaction is above that limit also this limit depended on your region and currency. In our example its up to 39 inr i.e, 3900 paise 
 #### 3. return the session url
 ```js
 app.post("/checkout", async (req, res) => {
@@ -272,7 +272,7 @@ app.post("/checkout", async (req, res) => {
 });
 ```
 ## Frontend
-in frontend we just need to call this api and handle redirect if backend return the session url
+in frontend we just need to call this backend api and handle redirect if backend return the session url
 
 #### 1. call the backend api with data
 ```js
@@ -281,7 +281,7 @@ const res = await fetch('/checkout', {
     headers: {
         'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ quantity: 2 })   // in this example we are using quantity, you can have whatever data you want
+    body: JSON.stringify({ quantity: 2 })   // in this example we are using quantity, you can have whatever data you want just make sure it matches with that of your backend
 });
 ```
 
@@ -382,21 +382,21 @@ Example:
 ### How to setup webhook
 1. **go to strip dashboard and search for webhook**
 
-    <img src="./image/img-2.png" style="width:500px">
+    <img src="./image/img-2.png" style="width:800px">
 
 2. **Add the trigger for webhook**
 
-    <img src="./image/img-3.png" style="width:500px">
+    <img src="./image/img-3.png" style="width:800px">
 
 3. **select the destination type which is webhook** 
 
-    <img src="./image/img-4.png" style="width:500px">
+    <img src="./image/img-4.png" style="width:800px">
 
 4. **add the destination url** 
 
-    <img src="./image/img-1.png" style="width:500px">
+    <img src="./image/img-1.png" style="width:800px">
 
-note: this will not work on localhost webhook api as strips localhost is different than that of yours ans strip has no access to your localhost
+note: this will not work on your localhost webhook api as strips localhost is different than that of yours and strip has no access to your localhost
 
 therefore you must deploy your webhook api and then add the deployed url
 
