@@ -18,6 +18,7 @@
 4. [TypeScript](./basics/Ts/readme.md)
 5. [Hono](./basics/Hono/README.md)
 6. [Payment Gateway](./basics/PaymentGateway/readme.md)
+7. [WebAssembly](./basics/WebAssembly/readme.md)
 
 
 # Mastering JS
