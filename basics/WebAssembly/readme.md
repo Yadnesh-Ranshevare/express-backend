@@ -5,7 +5,7 @@
 4. [Export Function In WebAssembly](#export-function-in-webassembly)
 
 
-[Acknowledgment]()
+[Acknowledgment](#acknowledgment)
 
 ---
 
@@ -297,5 +297,7 @@ Hello from WebAssembly!
 # Acknowledgment
 
 1. MDN Web Docs:- https://developer.mozilla.org/en-US/docs/WebAssembly
+2. Emscripten compiler:- https://emscripten.org/
+3. esmsdk github:- https://github.com/emscripten-core/emsdk.git
 
 [Go To Top](#concept)
