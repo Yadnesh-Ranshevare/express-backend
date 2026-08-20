@@ -1,0 +1,11 @@
+{
+  "name": "1m-rps",
+  "version": "1.0.0",
+  "description": "Resource monitoring means continuously tracking how much of your server/application resources are being used, so you can detect problems, maintain performance, and scale when needed.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "yadnesh ranshevare",
+  "license": "ISC"
+}
