@@ -341,8 +341,7 @@ Req/Bytes counts sampled once per second.
     - Max → 161 ms:\
     The slowest request took 161 ms
 3. **Req/Sec**
-    - in the Req/Sec table, Autocannon first measures your requests-per-second once every second
-    - You had 20 samples and it has 20 per-second measurements and then describes their distribution.
+    - in the Req/Sec table, Autocannon first measures your requests-per-second
     - Example:
         ```
         1st sec -> 2083 req
