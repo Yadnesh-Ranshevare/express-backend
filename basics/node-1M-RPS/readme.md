@@ -2,7 +2,7 @@
 
 1. [Resource Monitoring](#resource-monitoring)
 2. [Thread](#thread)
-
+3. [AutoCannon](#autocannon)
 
 ---
 
@@ -272,6 +272,103 @@ if (isMainThread) {
 }
 ```
 > Check the task manager for CPU utilization, you can see the 0 ideal time on CPU
+
+
+[Go To Top](#content)
+
+---
+# AutoCannon
+
+AutoCannon is an HTTP benchmarking/load-testing tool written in Node.js. You use it to generate lots of HTTP requests against your server and measure how well the server performs.
+
+For example, if your Node.js server is running at:
+```
+http://localhost:3000
+```
+you can run:
+```
+npx autocannon -m GET -c 20 -d 20 -p 2 "http://localhost:3000/simple"
+```
+here:
+- `-m` = HTTP method
+- `-c` = number of connection
+- `-d` = duration (-d = 20 -> Run the benchmark for 20 seconds.).
+- `-p` = number of request per connection (-c = 20 & -p = 2 -> 20*2 = 40 concurrent request at a time)
+
+It will send many requests and report things like:
+
+```
+Running 20s test @ http://localhost:3000/simple
+20 connections with 2 pipelining factor
+
+
+┌─────────┬──────┬───────┬───────┬───────┬──────────┬─────────┬────────┐
+│ Stat    │ 2.5% │ 50%   │ 97.5% │ 99%   │ Avg      │ Stdev   │ Max    │
+├─────────┼──────┼───────┼───────┼───────┼──────────┼─────────┼────────┤
+│ Latency │ 4 ms │ 17 ms │ 26 ms │ 30 ms │ 16.63 ms │ 5.85 ms │ 161 ms │
+└─────────┴──────┴───────┴───────┴───────┴──────────┴─────────┴────────┘
+┌───────────┬────────┬────────┬────────┬────────┬─────────┬─────────┬────────┐
+│ Stat      │ 1%     │ 2.5%   │ 50%    │ 97.5%  │ Avg     │ Stdev   │ Min    │
+├───────────┼────────┼────────┼────────┼────────┼─────────┼─────────┼────────┤
+│ Req/Sec   │ 2,083  │ 2,083  │ 2,233  │ 2,879  │ 2,333.7 │ 232.68  │ 2,082  │
+├───────────┼────────┼────────┼────────┼────────┼─────────┼─────────┼────────┤
+│ Bytes/Sec │ 523 kB │ 523 kB │ 561 kB │ 723 kB │ 586 kB  │ 58.4 kB │ 523 kB │
+└───────────┴────────┴────────┴────────┴────────┴─────────┴─────────┴────────┘
+
+Req/Bytes counts sampled once per second.
+# of samples: 20
+
+47k requests in 20.04s, 11.7 MB read
+```
+### Lets understand the output
+
+1. **Test configuration**
+    ```
+    Running 20s test @ http://localhost:3000/simple
+    20 connections with 2 pipelining factor
+    ```
+    This tells us:
+
+    - 20s → the test ran for about 20 seconds.
+    - 20 connections → Autocannon maintained up to 20 concurrent HTTP connections.
+    - 2 pipelining factor → each connection can have 2 requests in flight at a time.
+2. **Latency**
+    - Latency = how long it took the server to respond to a request.
+    - 50% → 17 ms:\
+    means half of the requests completed in 17 ms or less, and half took longer than 17 ms.
+    - 97.5% → 26 ms:\
+    means approximately 97.5% of requests completed in 26 ms or less.
+    - Max → 161 ms:\
+    The slowest request took 161 ms
+3. **Req/Sec**
+    - in the Req/Sec table, Autocannon first measures your requests-per-second once every second
+    - You had 20 samples and it has 20 per-second measurements and then describes their distribution.
+    - Example:
+        ```
+        1st sec -> 2083 req
+        2nd sec -> 2100 req
+        .
+        .
+        .
+        20th sec -> 2879 req
+        ```
+    - Then the percentiles tell you where you are in that sorted list:
+        | Percentile | Your value | Meaning                                           |
+        | ---------- | ---------: | ------------------------------------------------- |
+        | **1%**     |      2,083 | Very near the lowest throughput                   |
+        | **2.5%**   |      2,083 | Near the bottom                                   |
+        | **50%**    |      2,233 | **Median** — half the samples were below this     |
+        | **97.5%**  |      2,879 | Near the top — almost all samples were below this |
+        | **Avg**    |      233.7 | Average number of request per second              |  
+4. **Bytes/Sec**
+    - You have:
+        ```
+        Bytes/Sec
+
+        Avg → 586 kB
+        ```
+    - This means your server was sending approximately 586 kilobytes of response data per second
+
 
 
 [Go To Top](#content)
