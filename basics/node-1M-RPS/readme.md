@@ -3,6 +3,7 @@
 1. [Resource Monitoring](#resource-monitoring)
 2. [Thread](#thread)
 3. [AutoCannon](#autocannon)
+4. [PM2](#pm2)
 
 ---
 
@@ -287,13 +288,14 @@ http://localhost:3000
 ```
 you can run:
 ```
-npx autocannon -m GET -c 20 -d 20 -p 2 "http://localhost:3000/simple"
+npx autocannon -m GET -c 20 -d 20 -p 2 -w 1 "http://localhost:3000/simple"
 ```
 here:
 - `-m` = HTTP method
 - `-c` = number of connection
 - `-d` = duration (-d = 20 -> Run the benchmark for 20 seconds.).
 - `-p` = number of request per connection (-c = 20 & -p = 2 -> 20*2 = 40 concurrent request at a time)
+- `-w` = number of worker (processes/Thread generating the load)
 
 It will send many requests and report things like:
 
@@ -369,6 +371,222 @@ Req/Bytes counts sampled once per second.
     - This means your server was sending approximately 586 kilobytes of response data per second
 
 
+### Sending data via AutoCannon
+
+consider you request a PATCH api as follow:
+```
+"http://localhost:3000/update-something/123/JohnDoe?value1=test&value2=42"
+```
+with request body
+```json
+{
+  "foo1": "hello"
+}
+```
+and it return data something like:
+```json
+{
+    "id": "123",
+    "name": "jhon",
+    "value1": "abc",
+    "value2": "xyz",
+    "total_foo": "HELLO. WORLD. FOO. BAR. SAMPLE. DUMMY. DATA. TESTING. PRODUCTION. API. ",
+    "history": [
+        {
+            "event_id": 123,
+            "timestamp": "2026-08-21T14:24:32.096Z",
+            "action": "Action performed by jhon",
+            "metadata": "This is a string intended to take up space to simulate a medium-sized production API response object.This is a string intended to take up space to simulate a medium-sized production API response object.",
+            "status": "success"
+        },
+        {
+            "event_id": 124,
+            "timestamp": "2026-08-21T14:24:32.098Z",
+            "action": "Action performed by jhon",
+            "metadata": "This is a string intended to take up space to simulate a medium-sized production API response object.This is a string intended to take up space to simulate a medium-sized production API response object.",
+            "status": "pending"
+        }
+        .
+        .
+        .
+    ]
+}
+```
+
+now with AutoCannon:
+
+```
+npx autocannon -m PATCH -c 10  -d 30 -p 2 -w 1 -H "Content-Type: application/json" -b '{"foo1":"hello"}'  "http://localhost:3000/update-something/123/JohnDoe?value1=test&value2=42"
+```
+
+here AutoCannon provide two specific flags:
+- `-H` = use to set HTTP headers
+- `-b` = use to set request body
+
+To set multiple headers just use `-H` multiple times
+
+example
+```
+npx autocannon -m PATCH -c 50 -d 30 -p 2 -w 1 -H "Content-Type: application/json" -H "Authorization: Bearer my-test-token" -H "X-API-Key: test-api-key" -H "X-Custom-Header: hello" -b '{"foo1":"hello"}' "http://localhost:3000/update-something/123/JohnDoe?value1=test&value2=42"
+```
+Output:
+```
+┌─────────┬──────┬──────┬───────┬───────┬─────────┬─────────┬─────────┐
+│ Stat    │ 2.5% │ 50%  │ 97.5% │ 99%   │ Avg     │ Stdev   │ Max     │
+├─────────┼──────┼──────┼───────┼───────┼─────────┼─────────┼─────────┤
+│ Latency │ 1 ms │ 5 ms │ 11 ms │ 12 ms │ 6.56 ms │ 55.4 ms │ 5020 ms │
+└─────────┴──────┴──────┴───────┴───────┴─────────┴─────────┴─────────┘
+┌───────────┬────────┬────────┬────────┬─────────┬─────────┬────────┬────────┐
+│ Stat      │ 1%     │ 2.5%   │ 50%    │ 97.5%   │ Avg     │ Stdev  │ Min    │
+├───────────┼────────┼────────┼────────┼─────────┼─────────┼────────┼────────┤
+│ Req/Sec   │ 476    │ 476    │ 738    │ 782     │ 708.14  │ 77.58  │ 476    │
+├───────────┼────────┼────────┼────────┼─────────┼─────────┼────────┼────────┤
+│ Bytes/Sec │ 905 kB │ 905 kB │ 1.4 MB │ 1.49 MB │ 1.35 MB │ 147 kB │ 904 kB │
+└───────────┴────────┴────────┴────────┴─────────┴─────────┴────────┴────────┘
+
+Req/Bytes counts sampled once per second.
+# of samples: 30
+
+0 2xx responses, 21244 non 2xx responses
+21k requests in 30.08s, 40.4 MB read
+24 errors (0 timeouts)
+```
+
+[Go To Top](#content)
+
+---
+# PM2
+PM2 is a process manager for Node.js applications. It helps you run your JavaScript/Node.js app continuously, especially on a server.
+
+What PM2 does
+- Keeps your app running — if it crashes, PM2 can restart it.
+- Runs apps in the background — you don't need to keep a terminal open.
+- Automatically restarts after server reboot.
+- Manages multiple Node.js apps.
+- Provides logs for debugging.
+- Can use multiple CPU cores with cluster mode.
+- Lets you easily start, stop, restart, and monitor applications.
+
+You can install it globally with:
+
+```bash
+npm install -g pm2
+```
+now with PM2:
+```
+pm2 start src/index.js
+```
+output:
+```
+┌────┬──────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name     │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼──────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ index    │ fork     │ 0    │ online    │ 0%       │ 45.0mb   │
+└────┴──────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+host metrics | cpu: 8.1% | ram usage: 75.5% |
+```
+to stop:
+```bash
+pm2 stop 0 # using id
+pm2 stop index  # using name
+pm2 delete index    # to remove server from pm2
+```
+
+now to utilize all CPU core we want to spawn multiple instance in our server that can run on all available cores
+
+and to do that
+```bach
+npx pm2 start src/index.js -i max 
+```
+- `-i max` tells PM2 to create one instance per available CPU core.
+
+output:
+```
+┌────┬──────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name     │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼──────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ index    │ cluster  │ 0    │ online    │ 0%       │ 53.9mb   │
+│ 1  │ index    │ cluster  │ 0    │ online    │ 0%       │ 53.5mb   │
+│ 2  │ index    │ cluster  │ 0    │ online    │ 0%       │ 53.8mb   │
+│ 3  │ index    │ cluster  │ 0    │ online    │ 0%       │ 53.7mb   │
+│ 4  │ index    │ cluster  │ 0    │ online    │ 0%       │ 53.7mb   │
+│ 5  │ index    │ cluster  │ 0    │ online    │ 0%       │ 53.8mb   │
+│ 6  │ index    │ cluster  │ 0    │ online    │ 0%       │ 53.7mb   │
+│ 7  │ index    │ cluster  │ 0    │ online    │ 0%       │ 54.2mb   │
+│ 8  │ index    │ cluster  │ 0    │ online    │ 0%       │ 53.8mb   │
+│ 9  │ index    │ cluster  │ 0    │ online    │ 0%       │ 54.2mb   │
+│ 10 │ index    │ cluster  │ 0    │ online    │ 0%       │ 53.9mb   │
+│ 11 │ index    │ cluster  │ 0    │ online    │ 0%       │ 54.0mb   │
+│ 12 │ index    │ cluster  │ 0    │ online    │ 0%       │ 53.9mb   │
+│ 13 │ index    │ cluster  │ 0    │ online    │ 0%       │ 53.7mb   │
+│ 14 │ index    │ cluster  │ 0    │ online    │ 0%       │ 54.0mb   │
+│ 15 │ index    │ cluster  │ 0    │ online    │ 0%       │ 53.8mb   │
+└────┴──────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+host metrics | cpu: 11% | ram usage: 77% |
+```
+
+mode = cluster : cluster mode means running multiple Node.js processes of the same application so they can share the workload across CPU cores.
+
+To stop all of this cluster
+```bash
+pm2 delete all
+```
+
+now test with AutoCannon whether or not this improve the performance or not
+
+```bash
+npx autocannon -m PATCH -c 5 -d 20 -H "content-type: application/json" -b "{\"foo1\":\"hello\"}" "http://localhost:3000/update-something/123/JohnDoe?value1=test&value2=42"
+```
+output
+```
+┌─────────┬──────┬──────┬───────┬──────┬─────────┬─────────┬───────┐
+│ Stat    │ 2.5% │ 50%  │ 97.5% │ 99%  │ Avg     │ Stdev   │ Max   │
+├─────────┼──────┼──────┼───────┼──────┼─────────┼─────────┼───────┤
+│ Latency │ 1 ms │ 2 ms │ 6 ms  │ 9 ms │ 2.37 ms │ 1.81 ms │ 50 ms │
+└─────────┴──────┴──────┴───────┴──────┴─────────┴─────────┴───────┘
+┌───────────┬─────────┬─────────┬───────┬─────────┬──────────┬─────────┬─────────┐
+│ Stat      │ 1%      │ 2.5%    │ 50%   │ 97.5%   │ Avg      │ Stdev   │ Min     │
+├───────────┼─────────┼─────────┼───────┼─────────┼──────────┼─────────┼─────────┤
+│ Req/Sec   │ 1,276   │ 1,276   │ 1,771 │ 1,904   │ 1,714.35 │ 178.94  │ 1,276   │
+├───────────┼─────────┼─────────┼───────┼─────────┼──────────┼─────────┼─────────┤
+│ Bytes/Sec │ 42.6 MB │ 42.6 MB │ 59 MB │ 63.5 MB │ 57.1 MB  │ 5.96 MB │ 42.5 MB │
+└───────────┴─────────┴─────────┴───────┴─────────┴──────────┴─────────┴─────────┘
+
+Req/Bytes counts sampled once per second.
+# of samples: 20
+
+34k requests in 20.04s, 1.14 GB read
+```
+as you can see for same AutoCannon request:
+- with single instance we handles approx 710 req/sec
+- with multiple instance we handles approx 1715 req/sec
+
+### ecosystem.config.cjs
+`ecosystem.config.cjs` is a PM2 configuration file.
+
+Instead of putting all your PM2 options in a long command like:
+```bash
+npx pm2 start src/index.js -i max
+```
+you put the configuration in `ecosystem.config.cjs`, and then tell PM2 to use it.
+
+For example;
+```js
+module.exports = {
+  apps: [
+    {
+      name: "index",
+      script: "./src/index.js",
+      instances: "max",
+      exec_mode: "cluster"
+    }
+  ]
+};
+```
+Then start it with:
+```bash
+pm2 start ecosystem.config.cjs
+```
 
 [Go To Top](#content)
 
