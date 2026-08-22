@@ -19,6 +19,7 @@
 5. [Hono](./basics/Hono/README.md)
 6. [Payment Gateway](./basics/PaymentGateway/readme.md)
 7. [WebAssembly](./basics/WebAssembly/readme.md)
+8. [boosting performance (AutoCannon & PM2)](./basics/node-1M-RPS/readme.md)
 
 
 # Mastering JS
