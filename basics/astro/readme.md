@@ -101,6 +101,58 @@ That's where Astro's performance advantage comes from.
  
 > it is recommended to install the official astro extension inside your IDE 
 
+### Astro telemetry
+whe you run `npm run dev` you might see something like
+```bash
+> abc@0.0.1 dev
+> astro dev
+
+▶ Astro collects anonymous usage data.
+  This information helps us improve Astro.
+  Run "astro telemetry disable" to opt-out.
+  https://astro.build/telemetry
+```
+That's not an error. Your Astro project has started normally.
+
+This message is just Astro informing you about telemetry (anonymous usage statistics).
+
+Astro telemetry is anonymous usage data that Astro collects from the Astro CLI when you use it.
+
+Think of it like:
+```
+You run:
+npm run dev
+
+        ↓
+
+Astro CLI
+        ↓
+sends some anonymous usage statistics
+        ↓
+Astro developers use them to improve Astro
+```
+**What is it used for?**
+
+Typically, telemetry helps the Astro team understand things such as:
+
+- Which Astro versions are being used
+- Which CLI commands/features are commonly used
+- General environment information
+- Error/crash information that helps diagnose issues
+
+It is not required for Astro to work.
+
+### Disable Astro telemetry
+```bash
+npx astro telemetry disable
+```
+And re-enable it later with:
+```bash
+npx astro telemetry enable
+```
+> So that message you saw isn't an error, warning, or indication that something is wrong with your project. It's simply Astro notifying you about its telemetry.
+
+
 [Go To Top](#content)
 
 ---
