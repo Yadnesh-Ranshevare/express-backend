@@ -283,10 +283,11 @@ Your layout:
 The key concept is `<slot />`.
 
 suppose your page:
-```js
---- // in astro you write js between this 3 dash
+```astro
+<!-- src/layouts/index.astro -->
+--- 
 import Layout from "../layouts/Layout.astro";
----  // in astro you write js between this 3 dash
+---  
 
 <Layout title="Home">
   <h1>Welcome to my website</h1>
@@ -334,7 +335,8 @@ You can pass props exactly like an Astro component.
 
 Layout:
 
-```js
+```astro
+<!-- src/layouts/Layout.astro -->
 ---
 const { title, description } = Astro.props;
 ---
@@ -351,7 +353,8 @@ const { title, description } = Astro.props;
 </html>
 ```
 Page:
-```js
+```astro
+<!-- src/pages/about.astro -->
 ---
 import Layout from "../layouts/Layout.astro";
 ---
