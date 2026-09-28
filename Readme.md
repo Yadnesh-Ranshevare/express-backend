@@ -16,10 +16,12 @@
 2. [Web Socket](./basics/webSocket/readme.md)
 3. [Server-Sent Events (SSE)](./basics/ServerSentEvent/Readme.md)
 4. [TypeScript](./basics/Ts/readme.md)
-5. [Hono](./basics/Hono/README.md)
-6. [Payment Gateway](./basics/PaymentGateway/readme.md)
-7. [WebAssembly](./basics/WebAssembly/readme.md)
-8. [boosting performance (AutoCannon & PM2)](./basics/node-1M-RPS/readme.md)
+5. [De Bouncing](./basics/deBouncing/index.js)
+6. [Hono](./basics/Hono/README.md)
+7. [Payment Gateway](./basics/PaymentGateway/readme.md)
+8. [WebAssembly](./basics/WebAssembly/readme.md)
+9. [boosting performance (AutoCannon & PM2)](./basics/node-1M-RPS/readme.md)
+10. [Astro web-framework](./basics/astro/readme.md)
 
 
 # Mastering JS
@@ -41,8 +43,7 @@
 # Miscellaneous Topic
 1. [Md to Txt File conversion](./basics/Md-to-Txt/index.js)
 2. [Langflow Connection](./basics/langflow/index.js)
-5. [Admin js Library](./basics/adminJs/index.js)
-6. [De Bouncing](./basics/deBouncing/index.js)
-7. [UDP](./basics/UDP/readme.md)
+3. [Admin js Library](./basics/adminJs/index.js)
+4. [UDP](./basics/UDP/readme.md)
 
 ### advBackend is a simple backend project implementing Authentication System using express, JWT, multer, mongoDb, cloudinary, and bcrypt 

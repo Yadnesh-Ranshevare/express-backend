@@ -1,6 +1,8 @@
 # Content
 1. [Introduction](#1-introduction)
 2. [Installation](#installation)
+3. [Routing](#routing)
+4. [Layout](#layout)
 
 
 [Acknowledgment](#acknowledgment)
@@ -151,6 +153,336 @@ And re-enable it later with:
 npx astro telemetry enable
 ```
 > So that message you saw isn't an error, warning, or indication that something is wrong with your project. It's simply Astro notifying you about its telemetry.
+
+
+[Go To Top](#content)
+
+---
+# Routing
+Astro uses file-based routing (same as Next.js)
+
+Your folder and file structure inside src/pages/ directly determine your URLs.
+
+### 1. Basic routing
+
+Suppose your Astro project looks like:
+```
+src/
+└── pages/
+    ├── index.astro
+    ├── about.astro
+    ├── contact.astro
+    └── services.astro
+```
+Astro automatically creates:
+```
+index.astro      → /
+about.astro      → /about
+contact.astro    → /contact
+services.astro   → /services
+```
+There is no router configuration file you need to maintain.
+### 2. Folders become URL segments
+
+You can nest folders:
+```
+src/pages/
+├── index.astro
+├── about/
+│   ├── index.astro
+│   └── team.astro
+└── products/
+    ├── index.astro
+    └── pricing.astro
+```
+Routes become:
+```
+/                    → index.astro
+/about               → about/index.astro
+/about/team          → about/team.astro
+/products            → products/index.astro
+/products/pricing    → products/pricing.astro
+```
+### 3. Dynamic routes
+This is where Astro becomes more interesting.
+
+Suppose you have products:
+```
+/products/laptop
+/products/phone
+/products/tablet
+```
+You don't want to manually create:
+```
+laptop.astro
+phone.astro
+tablet.astro
+```
+Instead:
+```
+src/pages/products/[product].astro
+```
+The `[product]` is a dynamic parameter.
+
+Inside the page:
+```js
+---
+const { product } = Astro.params;
+---
+
+<h1>Product: {product}</h1>
+```
+
+
+[Go To Top](#content)
+
+---
+# Layout
+Astro layouts are basically a reusable component that defines the common HTML structure of multiple pages — navbar, footer, `<head>`, global styles, etc.
+
+### 1. Basic layout
+
+Suppose you create:
+```
+src/
+├── layouts/
+│   └── Layout.astro
+│
+└── pages/
+    ├── index.astro
+    └── about.astro
+```
+Your layout:
+```html
+<!-- src/layouts/Layout.astro -->
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Layout</title>
+  </head>
+
+  <body>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/about">About</a>
+    </nav>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer>
+      My Website
+    </footer>
+  </body>
+</html>
+```
+
+The key concept is `<slot />`.
+
+suppose your page:
+```js
+--- // in astro you write js between this 3 dash
+import Layout from "../layouts/Layout.astro";
+---  // in astro you write js between this 3 dash
+
+<Layout title="Home">
+  <h1>Welcome to my website</h1>
+  <p>This is the home page.</p>
+</Layout>
+```
+The `<slot />` gets replaced by the content inside `<Layout>`.
+
+So Astro effectively produces:
+```html
+<body>
+  <nav>
+    ...
+  </nav>
+
+  <main>
+    <h1>Welcome to my website</h1>
+    <p>This is the home page.</p>
+  </main>
+
+  <footer>
+    My Website
+  </footer>
+</body>
+```
+Creating:
+```
+src/layouts/MainLayout.astro
+```
+does not automatically make every page use it.
+
+You explicitly import it:
+```astro
+---
+import MainLayout from "../layouts/MainLayout.astro";
+---
+
+<MainLayout>
+  <h1>Hello</h1>
+</MainLayout>
+```
+
+### 2. Passing data to layouts
+You can pass props exactly like an Astro component.
+
+Layout:
+
+```js
+---
+const { title, description } = Astro.props;
+---
+
+<html>
+  <head>
+    <title>{title}</title>
+    <meta name="description" content={description} />
+  </head>
+
+  <body>
+    <slot />
+  </body>
+</html>
+```
+Page:
+```js
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout
+  title="About Us"
+  description="Learn more about our company"
+>
+  <h1>About Us</h1>
+</Layout>
+```
+Now the layout receives:
+```js
+{
+  title: "About Us",
+  description: "Learn more about our company"
+}
+```
+
+### 3. Nested layouts
+Imagine your application has:
+```
+src/
+├── layouts/
+│   ├── MainLayout.astro
+│   └── DashboardLayout.astro
+│
+└── pages/
+    ├── index.astro
+    └── dashboard/
+        ├── index.astro
+        └── settings.astro
+```
+You could have:
+```
+MainLayout
+│
+├── Navbar
+├── content
+└── Footer
+```
+And then:
+```
+DashboardLayout
+│
+├── Sidebar
+└── content
+```
+
+DashboardLayout can itself use MainLayout:
+```astro
+<!-- src/layouts/DashboardLayout.astro -->
+---
+import MainLayout from "./MainLayout.astro";    
+---
+
+<MainLayout title="Dashboard">
+
+  <div class="dashboard">
+    <aside>
+      Dashboard Sidebar
+    </aside>
+
+    <main>
+      <slot />
+    </main>
+  </div>
+
+</MainLayout>
+```
+Then:
+
+```astro
+<!-- src/pages/dashboard/index.astro -->
+---
+import DashboardLayout from "../../layouts/DashboardLayout.astro";
+---
+
+<DashboardLayout>
+  <h1>Dashboard</h1>
+</DashboardLayout>
+```
+### 3. Multiple slots
+You can also have named slots.
+
+For example:
+```astro
+---
+const { title } = Astro.props;
+---
+
+<html>
+  <head>
+    <title>{title}</title>
+  </head>
+
+  <body>
+
+    <header>
+      <slot name="header" />
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer>
+      <slot name="footer" />
+    </footer>
+
+  </body>
+</html>
+```
+Then:
+```html
+<Layout title="Home">
+
+  <div slot="header">
+    Custom Header
+  </div>
+
+  <h1>Main Content</h1>
+
+  <div slot="footer">
+    Custom Footer
+  </div>
+
+</Layout>
+```
+The slots get populated accordingly.
+
 
 
 [Go To Top](#content)
