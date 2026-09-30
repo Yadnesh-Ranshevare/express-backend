@@ -5,6 +5,7 @@
 3. [Astro Syntax](#astro-syntax)
 4. [Routing](#routing)
 5. [Layout](#layout)
+6. [Island](#islands)
 
 [Acknowledgment](#acknowledgment)
 
