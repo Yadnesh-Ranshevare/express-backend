@@ -246,16 +246,59 @@ unlike react where we can have only return one element at a time in astro we can
 
 ```astro
 ---
-const user = ["abc", "efg", "hij", "klm"]
+const users = [
+    { name: "Rahul Sharma", email: "rahul.sharma@example.com" },
+    { name: "Priya Patel", email: "priya.patel@example.com" },
+    { name: "Amit Kumar", email: "amit.kumar@example.com" },
+    { name: "Sneha Joshi", email: "sneha.joshi@example.com" },
+    { name: "Yash Mehta", email: "yash.mehta@example.com" }
+];
 ---
 
-<<div>
-    {user.map((user) =>
-        <h1>{user}</h1>
-        <p>a sentence</p>
+<div>
+    {users.map((user) =>
+        <h1>{user.name}</h1>
+        <p>{user.email}</p>
     )}
 </div>
 ```
+
+### Reusable component
+
+just as react in astro you can create a reusable component that you can use at multiple places in your UI
+
+Example:
+
+- create a file where you'll write you component code
+    ```astro
+    <!-- ./src/component/userCard.astro -->
+    ---
+    interface Props {   // typescript interface that define the type of a props to be accepted
+        user: {
+            name: string;
+            email: string;
+        };
+    }
+
+    const { user } = Astro.props;   // to accept the props from the parent
+    ---
+    <div>
+        <h1>{user.name}</h1>
+        <p>{user.email}</p>
+    </div>
+    ```
+- the name of the file will be the name of the component (in our case since the file name is `userCard.astro` the component name is `userCard`)
+- import that component in the parent
+
+    ```astro
+    <!-- ./src/pages/index.astro -->
+    ---
+    import UserCard from "../components/userCard.astro"
+    ---
+    <div>
+        {users.map((user) => <UserCard user={user} />)}
+    </div>
+    ```
 
 ### What is frontmatter?
 

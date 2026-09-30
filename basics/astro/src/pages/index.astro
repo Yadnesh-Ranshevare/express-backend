@@ -1,7 +1,16 @@
 ---
+import UserCard from "../components/userCard.astro"
+
+
 const name = "Astro";
 console.log(name + "from front matter");
-const user = ["abc", "efg", "hij", "klm"];
+const users = [
+  { name: "Rahul Sharma", email: "rahul.sharma@example.com" },
+  { name: "Priya Patel", email: "priya.patel@example.com" },
+  { name: "Amit Kumar", email: "amit.kumar@example.com" },
+  { name: "Sneha Joshi", email: "sneha.joshi@example.com" },
+  { name: "Yash Mehta", email: "yash.mehta@example.com" }
+];
 ---
 
 <html lang="en">
@@ -16,10 +25,7 @@ const user = ["abc", "efg", "hij", "klm"];
     <body>
         <h1>{name}</h1>
         <div>
-            {user.map((user) => 
-                <h1>{user}</h1>
-                <p>a sentence</p>
-            )}
+            {users.map((user) => <UserCard user={user} />)}
         </div>
     </body>
 </html>
