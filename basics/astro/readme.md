@@ -1,6 +1,6 @@
 # Content
 
-1. [Introduction](#1-introduction)
+1. [Introduction](#introduction)
 2. [Installation](#installation)
 3. [Astro Syntax](#astro-syntax)
 4. [Routing](#routing)
@@ -10,7 +10,7 @@
 
 ---
 
-# 1. Introduction
+# Introduction
 
 - Astro is a modern web framework for building fast, content-focused websites.
 - It is a framework that lets you build websites using React, Vue, Svelte, Solid, etc., while sending as little JavaScript to the browser as possible.
@@ -29,7 +29,8 @@ An Island is framework agnostic that is Astro islands can use any UI frameworks 
 - Svelte
 - Preact
 - Solid
-    > Different frameworks can even be used on the same Astro page.
+
+> Different frameworks can even be used on the same Astro page.
 
 Mental model:\
 `Mostly static HTML + small interactive JavaScript islands`
@@ -791,6 +792,67 @@ Then:
 ```
 
 The slots get populated accordingly.
+
+[Go To Top](#content)
+
+---
+#  Islands
+An Island in Astro is basically an interactive UI component that gets its own JavaScript, while the rest of the page can remain plain HTML.
+
+> To learn more check out the [Introduction Part](#introduction)
+
+To add the island in your astro app just follow the following steps:
+
+### 1. install library
+to use another library as a island in your astro project you first need to install that library into your project
+
+Example: to use react island you first need to install react into your astro project
+
+Astro provides integration method to integrate such library 
+
+example for react island astro integration:
+```
+npx astro add react
+```
+
+> visit the [official doc](https://docs.astro.build/en/guides/framework-components/) to know more
+
+### 2. Create your react component
+```tsx
+// ./src/components/ReactComponent.tsx
+import React, { useState } from 'react'
+
+export default function ReactComponent() {
+    const [count, setCount] = useState(0);
+
+    const increment = () => {
+        setCount(count + 1);
+        console.log(count);
+    }
+  return (
+    <div>
+      this is a react component
+      <button onClick={increment}>count is {count}</button>
+    </div>
+  )
+}
+```
+### 3. import it into the astro page
+```astro
+---
+import ReactComponent from "../components/ReactComponent";
+---
+
+<div>
+    <!-- This component's JS will begin importing when the page loads -->
+    <ReactComponent client:only/>
+</div>
+```
+> since we are using react setState we need the components js to be loaded on client/browser
+>
+> Check [official doc](https://docs.astro.build/en/guides/framework-components/#hydrating-interactive-components) to know more
+
+
 
 [Go To Top](#content)
 
