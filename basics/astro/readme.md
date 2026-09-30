@@ -240,7 +240,7 @@ const user = ["abc", "efg", "hij", "klm"]
 </div>
 ```
 
-Unlike react astro doesn't need a key prop at the time or rending a list as everything convert into html at build time before reaching browser
+Unlike react astro doesn't need a key prop at the time or rending a list as everything convert into html at build time that is before reaching browser
 
 unlike react where we can have only return one element at a time in astro we can return multiple element
 
@@ -269,7 +269,7 @@ just as react in astro you can create a reusable component that you can use at m
 
 Example:
 
-- create a file where you'll write you component code
+- create a file where you'll write your component code
     ```astro
     <!-- ./src/component/userCard.astro -->
     ---
@@ -287,16 +287,15 @@ Example:
         <p>{user.email}</p>
     </div>
     ```
-- the name of the file will be the name of the component (in our case since the file name is `userCard.astro` the component name is `userCard`)
-- import that component in the parent
+- import that component in the parent with any name you want (make sure name start with capital)
 
     ```astro
     <!-- ./src/pages/index.astro -->
     ---
-    import UserCard from "../components/userCard.astro"
+    import MyUserCard from "../components/userCard.astro" // instead of MyUserCard you can name it anything as long as first letter is capital
     ---
     <div>
-        {users.map((user) => <UserCard user={user} />)}
+        {users.map((user) => <MyUserCard user={user} />)}
     </div>
     ```
 
