@@ -22,7 +22,7 @@
 8. [WebAssembly](./basics/WebAssembly/readme.md)
 9. [boosting performance (AutoCannon & PM2)](./basics/node-1M-RPS/readme.md)
 10. [Astro web-framework](./basics/astro/readme.md)
-
+11. [Monorepo](./basics/monorepo/README.md)
 
 # Mastering JS
 
