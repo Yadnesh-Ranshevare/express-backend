@@ -3,7 +3,9 @@
 1. [Introduction](#introduction)
 2. [Turborepo](#turborepo)
 3. [Understand the folder and file structure of the Turborepo](#understand-the-folder-and-file-structure-of-the-turborepo)
-4. [How does packages communicate with app](#how-does-packages-communicate-with-app)
+4. [How to Create a new App ](#how-to-create-a-new-app)
+5. [How to create a new package](#how-to-create-a-new-package)
+6. [How does packages communicate with app](#how-does-packages-communicate-with-app)
 
 ---
 
@@ -361,6 +363,187 @@ Turbo can run independent work in parallel.
 
 
 
+
+[Go To Top](#content)
+
+---
+# How to Create a new App 
+Turborepo itself doesn't create the app framework for you. You create something like a Next.js, React, Vite, or Expo app inside `apps/`, and Turborepo manages it as a workspace.
+
+### 1. Create the app
+
+From the root of your Turborepo navigate the app folder:
+```bash
+cd app
+```
+here you can create your new app
+```bash
+npx create-next-app@latest admin
+# or
+bunx create-next-app@latest admin
+```
+
+this creates:
+```
+my-turborepo/
+└── apps/
+    ├── web/          ← existing app
+    └── admin/        ← new app
+```
+### 2. The important part: `package.json`
+Your new app gets its own `package.json`:
+```json
+// ./my-turborepo/app/admin/package.json
+{
+  "name": "admin",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "next": "...",
+    "react": "...",
+    "react-dom": "..."
+  }
+}
+```
+This is what makes `admin` an independent workspace/app inside the monorepo.
+
+### 3. Run the new app
+your `apps/admin/package.json` has a dev script
+```json
+{
+  "name": "admin",
+  "scripts": {
+    "dev": "next dev"
+  }
+}
+```
+now you can `cd` into this app and execute this `dev` script:
+```bash
+cd apps/admin
+```
+```bash
+bun run dev
+# or 
+npm run dev
+```
+
+you also have `package.json` at the root which can run this app for you
+```json
+// ./my-turborepo/package.json
+{
+    "name": "monorepo",
+    "private": true,
+    "scripts": {
+        "build": "turbo run build",
+        "dev": "turbo run dev",
+    }
+}
+```
+
+now run the `dev` script
+```bash
+npm run dev
+# or
+bun run dev
+```
+this will run all the app present in your monorepo
+
+to run a specific app
+```bash
+npm run --filter newapp dev
+# or
+bun --filter newapp dev
+```
+here `newapp` is the name of your app present inside your `package.json`
+
+
+[Go To Top](#content)
+
+---
+# How to create a new package
+In a Turborepo, creating a package is basically creating a new folder under `packages/` and giving it its own `package.json`.
+
+Suppose your repo looks like:
+
+```
+my-turborepo/
+├── apps/
+│   ├── web/
+│   └── docs/
+│
+├── packages/
+│   ├── ui/
+│   └── config/
+│
+├── package.json
+├── turbo.json
+└── pnpm-workspace.yaml
+```
+### 1. Create the package folder
+For example, let's create a `utils` package:
+```bash
+mkdir packages/utils
+```
+Now you have:
+```
+packages/
+├── ui/
+├── config/
+└── utils/
+```
+### 2. Create package.json
+Inside `packages/utils/package.json`:
+```json
+{
+  "name": "@repo/utils",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    "./*": "./src/*.ts"
+  }
+}
+```
+Now create:
+```
+packages/utils/
+├── package.json
+└── src/
+    └── index.ts
+```
+For example:
+```js
+// packages/utils/src/index.ts
+
+export function add(a: number, b: number) {
+  return a + b;
+}
+```
+This `add` is your new package you can use into another app
+### 3. Use the package from an app
+Suppose you want to use `@repo/utils` inside `apps/web`.
+
+Add it to `apps/web/package.json`:
+```json
+{
+  "dependencies": {
+    "@repo/utils": "workspace:*"
+  }
+}
+```
+Then run:
+```bash
+npm inatsll
+# or
+bun install
+```
+Now you can import it:
+```js
+import { add } from "@repo/utils/index"
+```
 
 [Go To Top](#content)
 
