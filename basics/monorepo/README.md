@@ -7,6 +7,8 @@
 5. [How to create a new package](#how-to-create-a-new-package)
 6. [How does packages communicate with app](#how-does-packages-communicate-with-app)
 
+[Acknowledgment](#acknowledgment)
+
 ---
 
 # Introduction
@@ -676,4 +678,12 @@ my-project/
 
 [Go To Top](#content)
 
+---
+
+# Acknowledgment
+
+- A blog to understand the monorepo: https://monorepo.tools/
+- [Chai aur Code](https://www.youtube.com/@chaiaurcode): turborepo one shot video
+- official website: https://turborepo.dev/
+- docs: https://turborepo.dev/docs
 ---
